@@ -1,0 +1,318 @@
+<html lang="en" style="padding: 20px">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <script type="text/javascript" src="20.ObjectSchema.js">//</script>
+    <title>Object Schema</title>
+    <style>
+          #collectionsTable tbody tr {
+              cursor: pointer;
+          }
+          #collectionsTable tbody tr:hover {
+              background-color: whitesmoke;
+          }
+        </style>
+  </head>
+  <body>
+    <h2 class="ui header">SObjects</h2>
+    <table id="collectionsTable" class="ui celled table">
+      <thead>
+        <tr class="header">
+          <th>Name</th>
+          <th>Label</th>
+          <th>Key Prefix</th>
+          <th>CustomObject</th>
+        </tr>
+      </thead>
+    </table>
+    <div id="details" style="margin-top: 20px;">
+      <div id="tab-menu" class="ui top attached tabular menu">
+        <a id="tab-menu-current" class="active item" data-tab="tab-current">
+          <i>Current</i>
+        </a>
+      </div>
+      <div id="tab-current" class="ui bottom attached active tab segment" data-tab="tab-current">
+        <!--Container to display the current object.-->
+      </div>
+    </div>
+    <script>
+
+  function renderObjectName( data, type, row, meta ) {
+    if ( type === 'display' )
+    {
+      return "<div class='name'>" + data + "</div>";
+    }
+    else
+    {
+      return data;
+    }
+  }
+
+  function getObjectDetailsHtml( tabId, data ) {
+
+    let keyPrefixSection = "";
+    if ( data.keyPrefix !== "" )
+    {
+      keyPrefixSection = `
+        <tr>
+          <td>Key Prefix</td>
+          <td>${data.keyPrefix}</td>
+        </tr>`;
+    }
+
+    let flagsSection = data.flags.map( flag => `<div class="item">${flag}</div>` ).join( "" );
+
+    let customObjectSection = "";
+    if ( data.customObject )
+    {
+      customObjectSection = `
+        <tr>
+          <td>CustomObject</td>
+          <td>true</td>
+        </tr>`;
+    }
+
+    let topSection = `
+    <h2 class='ui header'>${data.name}</h2>
+    <table class="ui very basic collapsing celled table">
+      <tbody>
+        <tr>
+          <td>Label</td>
+          <td>${data.label}</td>
+        </tr>
+        <tr>
+          <td>Label Plural</td>
+          <td>${data.labelPlural}</td>
+        </tr>
+        ${keyPrefixSection}
+        <tr>
+          <td>Flags</td>
+          <td>
+            <div class="ui horizontal list">
+              ${flagsSection}
+            </div>
+          </td>
+        </tr>
+        <!-- TODO: Reinstate these when we have meaningful URLs available
+        <tr>
+          <td>URL Detail</td>
+          <td>${data.urlDetail}</td>
+        </tr>
+        <tr>
+          <td>URL Edit</td>
+          <td>${data.urlEdit}</td>
+        </tr>
+        <tr>
+          <td>URL New</td>
+          <td>${data.urlNew}</td>
+        </tr>
+         -->
+        ${customObjectSection}
+      </tbody>
+    </table>`;
+
+    let fieldsSectionHeader = `
+    <h3 class='ui header'>Fields</h3>
+    <table id='${tabId}-fields-table' class="ui collapsing celled table">
+      <thead>
+        <tr class="header">
+          <th>Name</th>
+          <th>Label</th>
+          <th>Type</th>
+          <th>Flags</th>
+          <th>CustomObject</th>
+        </tr>
+      </thead>
+      <tbody>`;
+
+    let fieldsSection = data.fields.map( field => {
+      let name = field.name;
+      if ( field.flags.includes( 'nameField' ) )
+      {
+        name = `<h4 class='ui header'>${field.name}</h4>`;
+      }
+
+      let type = field.type;
+      if ( typeof type === 'object' )
+      {
+        if ( type.type === 'picklist' )
+        {
+          type = `
+            <div>picklist <span class="ui labels">` +
+            type.values.map( value => `<div class="ui secondary basic label">${value}</div>` ).join( "" ) +
+            "</span></div>";
+        }
+        else if ( type.type === 'reference' )
+        {
+          type = `
+            <div>reference <span class="ui labels">` +
+            type.targets.map( target => `<a class="ui primary basic label" onclick="addAndDisplayObjectDetails('${target}', true, false)"><i class="arrow right icon"></i>${target}</a>` ).join( "" ) +
+            "</span></div>";
+        }
+      }
+
+      let flagsSection = field.flags.map( flag => `<div class="ui green basic label"><i class="check icon"></i>${flag}</div>` ).join( "" );
+
+      return `
+        <tr>
+          <td>${name}</td>
+          <td>${field.label}</td>
+          <td>${type}</td>
+          <td>
+            <div class="ui labels">
+              ${flagsSection}
+            </div>
+          </td>
+          <td>${field.custom}</td>
+        </tr>`;
+    } ).join( "" );
+
+    let fieldsSectionFooter = `
+      </tbody>
+    </table>`;
+
+    return topSection + fieldsSectionHeader + fieldsSection + fieldsSectionFooter;
+  }
+
+  function displayObjectDetails( objName, scrollIntoView ) {
+    let existingTab = document.getElementById( `tab-obj-${objName}` );
+    if ( existingTab !== null )
+    {
+      existingTab.click();
+    }
+    else
+    {
+      let objData = data.find( row => row.name === objName );
+      if (objData)
+      {
+        document.getElementById( 'tab-current' ).innerHTML = getObjectDetailsHtml( 'tab-current', objData );
+        initDataTableWithButtons(
+          '#tab-current-fields-table',
+          `${objName} Fields`,
+          true,
+          true,
+          {
+            pageLength: 50,
+          }
+        );
+      }
+      else
+      {
+        document.getElementById('tab-current').innerHTML = `<div class="ui negative message">Object "${objName}" not found.</div>`;
+      }
+
+      let menuItem = document.getElementById( 'tab-menu-current' );
+      menuItem.innerHTML = `<i>${objName}</i>`;
+      menuItem.click();
+    }
+
+    if ( scrollIntoView )
+    {
+      document.getElementById( 'tab-menu' ).scrollIntoView();
+    }
+  }
+
+  function addAndDisplayObjectDetails( objName, showTab, scrollIntoView ) {
+    let objTab = document.getElementById( `tab-obj-${objName}` );
+    if ( objTab === null )
+    {
+      let newTabDetail = document.createElement( 'div' );
+      newTabDetail.setAttribute( 'class', 'ui bottom attached tab segment' );
+      newTabDetail.setAttribute( 'data-tab', objName );
+      document.getElementById( 'details' ).appendChild( newTabDetail );
+
+      objTab = document.createElement( 'a' );
+      objTab.setAttribute( 'id', `tab-obj-${objName}` );
+      objTab.setAttribute( 'class', 'item' );
+      objTab.setAttribute( 'data-tab', objName );
+      objTab.innerText = objName;
+      document.getElementById( 'tab-menu' ).appendChild( objTab );
+
+      let objData = data.find( row => row.name === objName );
+      if (objData)
+      {
+        newTabDetail.innerHTML = getObjectDetailsHtml( `tab-obj-${objName}`, objData );
+        initDataTableWithButtons(
+          `#tab-obj-${objName}-fields-table`,
+          `${objName} Fields`,
+          true,
+          true,
+          {
+            pageLength: 50,
+          }
+        );
+      }
+      else
+      {
+        newTabDetail.innerHTML = `<div class="ui negative message">Object "${objName}" not found.</div>`;
+      }
+      $('.menu .item').tab();
+    }
+
+    if ( showTab )
+    {
+      objTab.click();
+    }
+
+    if ( scrollIntoView )
+    {
+      document.getElementById( 'tab-menu' ).scrollIntoView();
+    }
+  }
+
+  $( document ).ready( function ()
+  {
+    const colTable = initDataTableWithButtons(
+      '#collectionsTable',
+      'Salesforce SObjects',
+      true,
+      true,
+      {
+        data: data,
+        columns: [
+          { data: 'name', render: renderObjectName },
+          { data: 'label' },
+          { data: 'keyPrefix' },
+          { data: 'customObject' }
+        ]
+      }
+    );
+
+    let clickTimer = null;
+    $('#collectionsTable tbody').on('click', 'tr', function () {
+        const objName = $(this).find('.name').text();
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+        // Do nothing here; dblclick will handle
+      } else {
+        clickTimer = setTimeout(() => {
+          displayObjectDetails(objName); // single-click
+          clickTimer = null;
+        }, 300);
+      }
+    });
+
+    $('#collectionsTable tbody').on('dblclick', 'tr', function (e) {
+      e.preventDefault();
+      if (clickTimer) {
+        clearTimeout(clickTimer);
+        clickTimer = null;
+      }
+        const objName = $(this).find('.name').text();
+      addAndDisplayObjectDetails(objName, true, false); // double-click
+    });
+
+    $('.menu .item').tab();
+  } );</script>
+  </body>
+</html>

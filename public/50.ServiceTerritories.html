@@ -1,0 +1,78 @@
+<html lang="en" style="padding: 20px" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <title>Service Territories</title>
+  </head>
+  <body>
+    <h1>Service Territory Summary</h1>
+    <table id="territories-summary" class="ui responsive celled table">
+      <thead>
+        <tr class="header">
+          <th>Name</th>
+          <th>Parents</th>
+          <th>Operating hours</th>
+          <th>Primary members</th>
+          <th>Primary op hours</th>
+          <th>Secondary members</th>
+          <th>Secondary op hours</th>
+        </tr>
+      </thead>
+    </table>
+    <script>
+  const summaryData = [
+{ "name": "Acme Partners Territory", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability San Francisco]", "value": "Field Availability San Francisco" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "London Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[London Contact Center Workforce]", "value": "London Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Los Angeles", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability Los Angeles]", "value": "Field Availability Los Angeles" }, "primaryMemberCount": 11, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Oakland Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Palo Alto Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Repair Depot", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Base Calendar]", "value": "Base Calendar" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "San Francisco Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Contact Center Workforce]", "value": "San Francisco Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "San Francisco Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Operating Hours]", "value": "San Francisco Operating Hours" }, "primaryMemberCount": 6, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "San Francisco", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability San Francisco]", "value": "Field Availability San Francisco" }, "primaryMemberCount": 10, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Tokyo Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Tokyo Contact Center Workforce]", "value": "Tokyo Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Virtual Trainers", "parents": [ ], "operatingHours": { "unresolved": "OperatingHours[Id=0OHKc000000gPEYOA2]", "value": "0OHKc000000gPEYOA2" }, "primaryMemberCount": 4, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null }
+];
+
+      $( document ).ready( function ()
+        {
+          initDataTableWithButtons(
+            '#territories-summary',
+            'Service Territory Summary',
+            true,
+            true,
+            {
+              data: summaryData,
+              columns: [
+                { data: 'name', title: 'Name' },
+                { data: 'parents', title: 'Parents',
+                  render: renderXoomReferences(false, 'breadcrumb', (item) => item, '<span class="divider">/</span>') },
+                { data: 'operatingHours', title: 'Operating hours', render: renderXoomReference(false) },
+                { data: 'primaryMemberCount', title: 'Primary members' },
+                { data: 'primaryOperatingHours', title: 'Primary op hours', render: renderXoomReferences(false) },
+                { data: 'secondaryMemberCount', title: 'Secondary members' },
+                { data: 'secondaryOperatingHours', title: 'Secondary op hours', render: renderXoomReferences(false) }
+              ],
+              columnDefs: [
+                {
+                  targets: [1, 2, 4, 6],
+                  type: 'html',
+                },
+              ],
+              pageLength: 20,
+              lengthMenu: [20, 40, 70, 100]
+            }, true,
+          );
+
+        } );</script>
+  </body>
+</html>

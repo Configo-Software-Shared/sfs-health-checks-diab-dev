@@ -1,0 +1,397 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <title>Scheduling</title>
+  </head>
+  <body style="padding:16px">
+    <h1 class="ui header">Scheduling</h1>
+    <h2 class="ui header">General Logic</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Multiday service appointment field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsMultiDay__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Set the hour that starts a new day based on the Availability rule(s)</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Maximum days to get candidates or to book an appointment</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>Delay auto-scheduling until appointments are geocoded</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Activate Approval confirmation on resource absences</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Enable resource crew skill grouping</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Avoid aerial calculation upon callout DML exception</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Respect secondary STM operating hours</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Select which statuses are considered as pinned, or unmovable, for scheduling</td>
+          <td>
+            <div class="ui list">
+              <div class="item">
+                <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Cannot Complete</div>
+              </div>
+              <div class="item">
+                <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Completed</div>
+              </div>
+              <div class="item">
+                <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Dispatched</div>
+              </div>
+              <div class="item">
+                <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">In Progress</div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Scheduling Priority</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Priority Field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__Scheduling_Priority__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item Priority Field</td>
+          <td />
+        </tr>
+        <tr>
+          <td>Service Appointment Priority Field</td>
+          <td />
+        </tr>
+        <tr>
+          <td>Use 1-100 priority scale</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Complex Work</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Enable complex work</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Use all-or-none scheduling for related appointments</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Limit Apex Operations</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Use all-or-none scheduling for related appointments</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Timeout Limit for Get Candidates (Percent)</td>
+          <td>95</td>
+        </tr>
+        <tr>
+          <td>Timeout Limit for Appointment Booking (Percent)</td>
+          <td>95</td>
+        </tr>
+        <tr>
+          <td>Timeout Limit for Scheduling (Percent)</td>
+          <td>90</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Dynamic Gantt</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Fix Overlaps</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Automatically fix overlaps when an appointment overlaps with another appointment or absence</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>When attempting to fix overlaps</td>
+          <td>Schedule To All Resources</td>
+        </tr>
+        <tr>
+          <td>After unscheduling services reschedule them by</td>
+          <td>Chronological Order</td>
+        </tr>
+        <tr>
+          <td>When unable to find a valid schedule for an appointment</td>
+          <td>On Reschedule Failure Set Service To In Jeopardy</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Fill-in Schedule</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Service Appointment candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Order candidate appointments by</td>
+          <td>priority</td>
+        </tr>
+        <tr>
+          <td>Max appointments to schedule</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td>Max runtime (seconds)</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Group Nearby Appointments</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Service Appointment candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item candidate Boolean field</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__IsFillInCandidate__c</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Max appointments to schedule</td>
+          <td>50</td>
+        </tr>
+        <tr>
+          <td>Max runtime (seconds)</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>When attempting to schedule the unscheduled service after the nearby services</td>
+          <td>Schedule To Original Resource Only</td>
+        </tr>
+        <tr>
+          <td>When unable to arrange schedule</td>
+          <td>On Reschedule Failure Set Service To In Jeopardy</td>
+        </tr>
+        <tr>
+          <td>Radius for nearby appointments</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Reshuffle Assignments</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Max time horizon (days) in which the appointment can be scheduled</td>
+          <td>7</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Routing</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Enable Street Level Routing</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Enable Point-to-Point Predictive Routing</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Calculate travel and breaks</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Travel speed unit</td>
+          <td>MPH</td>
+        </tr>
+        <tr>
+          <td>Default travel speed</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Map</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Show map</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Show street level routing in the Service Resource map tab</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>SLR Purge</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Active</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Max routes in cache</td>
+          <td>50000</td>
+        </tr>
+        <tr>
+          <td>Cron expression</td>
+          <td>0 0 0 ? JAN,FEB,MAR,APR,MAY,JUN,JUL,AUG,SEP,OCT,NOV,DEC SUN,MON,TUE,WED,THU,FRI,SAT *</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Bundling</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Bundle your service appointments</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Automated Bundling</b>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">-- TODO: Figure out where these settings are. --</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Live Bundling</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Automatically updates bundles when service appointments are modified or added to your appointment list</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Bundle Update Frequency</td>
+          <td>00:10</td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Work Capacity</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Availability Calculation</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Schedule</td>
+          <td>-- TODO: Figure out where these settings are. --</td>
+        </tr>
+        <tr>
+          <td>Calculate availability for</td>
+          <td>30 days</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Work Capacity Limits</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Limit Override Policy</td>
+          <td>No relaxation</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

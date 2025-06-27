@@ -1,0 +1,1291 @@
+<html lang="en" style="padding: 20px" xmlns="http://www.w3.org/1999/xhtml" xmlns:xoom="urn:xmlns:zanyants:xoom">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" xmlns="" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" xmlns="" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" xmlns="">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js" xmlns="">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js" xmlns="">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js" xmlns="">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js" xmlns="">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js" xmlns="">//</script>
+    <title>FSL Scheduling Policy matrix</title>
+  </head>
+  <body>
+    <h1>Scheduling Policies</h1>
+    <table id="policies" class="ui responsive collapsing celled table">
+      <thead>
+        <tr class="header">
+          <th>Name</th>
+          <th>Description</th>
+          <th>Clustering Weight</th>
+          <th>Priority Weight</th>
+          <th>Travel Mode</th>
+          <th>Commit Mode</th>
+          <th>Daily Optimization</th>
+          <th>Fix Overlaps</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="odd">
+          <td class="strongleft">Customer First</td>
+          <td class="left">This policy balances great customer service with travel minimization. Appointments are graded first by the customer\'s selection of a preferred employee and by the ability to provide the service as soon as possible. Travel minimization is considered as a second priority.</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Emergency</td>
+          <td class="left">This policy is used in order to schedule emergencies from the emergency action</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">High Intensity</td>
+          <td class="left">This policy is typically used in times of high service volumes, like a storm scenario, where the business is focusing on employee productivity first and customer preferences are considered as a second priority</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">In-day</td>
+          <td class="left">This policy balances great customer service with travel minimization. Appointments are graded first by the customer\'s selection of a preferred employee and by the ability to provide the service as soon as possible. Travel minimization is considered as a second priority.</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>AlwaysCommit</td>
+          <td>true</td>
+          <td>true</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">In-day - ESO - Dynamic Breaks</td>
+          <td class="left">This policy balances great customer service with travel minimization. Appointments are graded first by the customer\'s selection of a preferred employee and by the ability to provide the service as soon as possible. Travel minimization is considered as a second priority.</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>AlwaysCommit</td>
+          <td>true</td>
+          <td>true</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Soft Boundaries</td>
+          <td class="left">This policy is identical to the customer first policy, but allows the sharing of employees between different territories in order to enhance service coverage</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+        </tr>
+      </tbody>
+    </table>
+    <h1>Scheduling Policy matrix</h1>
+    <table id="policy-matrix" class="ui collapsing celled table">
+      <thead>
+        <tr>
+          <th />
+          <th>Customer First</th>
+          <th>Emergency</th>
+          <th>High Intensity</th>
+          <th>In-day</th>
+          <th>In-day - ESO - Dynamic Breaks</th>
+          <th>Soft Boundaries</th>
+        </tr>
+      </thead>
+      <tdata>
+        <tr>
+          <th class="left" colspan="7">
+            <b>Work Rules</b>
+          </th>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Active Resources</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Count Rule</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Designated Work</td>
+          <td>YES</td>
+          <td />
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Due Date</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Earliest Start Permitted</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Excluded Resources</td>
+          <td>YES</td>
+          <td />
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td />
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Field Service - Capacity Limit Rule</td>
+          <td>YES</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Finish</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Match Contractor Checkbox Requirement</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Match Skills</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Match Territory</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Maximum Travel From Home</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Required Service Resource</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Resource Availability</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Resource Availability - Capacity Resource</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td>YES</td>
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Resource Availability - Dynamic Breaks</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td>YES</td>
+          <td />
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Resource Availability - Non Capacity Resource</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Service Appointment Visiting Hours</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Service Crew Resource Availability</td>
+          <td>YES</td>
+          <td />
+          <td />
+          <td>YES</td>
+          <td />
+          <td />
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Start</td>
+          <td>YES</td>
+          <td />
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+          <td>YES</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Working Territories</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr>
+          <th class="left" colspan="7">
+            <b>Goals</b>
+          </th>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">ASAP</td>
+          <td>4.0</td>
+          <td />
+          <td>2.0</td>
+          <td>4.0</td>
+          <td>4.0</td>
+          <td>4.0</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Minimize Overtime</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Minimize Travel</td>
+          <td>2.0</td>
+          <td />
+          <td>7.0</td>
+          <td>2.0</td>
+          <td>2.0</td>
+          <td>2.0</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Preferred Service Resource</td>
+          <td>4.0</td>
+          <td />
+          <td>1.0</td>
+          <td>4.0</td>
+          <td>4.0</td>
+          <td>4.0</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongLeft">Resource Priority</td>
+          <td>1.0</td>
+          <td />
+          <td />
+          <td>1.0</td>
+          <td>1.0</td>
+          <td>1.0</td>
+        </tr>
+        <tr class="even">
+          <td class="strongLeft">Skill Level</td>
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+          <td />
+        </tr>
+      </tdata>
+    </table>
+    <h1>Work Rules</h1>
+    <table id="work-rules" class="ui responsive collapsing celled table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Active</th>
+          <th>Boolean Operator</th>
+          <th>Break Duration</th>
+          <th>Break Start</th>
+          <th>Description</th>
+          <th>Enable Overtime</th>
+          <th>Evaluation Order</th>
+          <th>Is Fixed Gap</th>
+          <th>Match Constant Boolean Value</th>
+          <th>Match Skill Level</th>
+          <th>Maximum Travel From Home Type</th>
+          <th>Maximum Travel From Home</th>
+          <th>Minimum Gap</th>
+          <th>Object Group Field</th>
+          <th>Pass Empty Values</th>
+          <th>Resource Group Field</th>
+          <th>Resource Property</th>
+          <th>Service Property</th>
+          <th>Service Schedule Time Property</th>
+          <th>Service Time Operator</th>
+          <th>Service Time Property</th>
+          <th>Start of Day</th>
+          <th>Travel From Home</th>
+          <th>Travel To Home</th>
+          <th>Working Location Enable Primary</th>
+          <th>Crew Resources Availability</th>
+          <th>Enhanced Match Linking Object</th>
+          <th>Service Appointment Matching Field</th>
+          <th>Service Linking Object Reference Field</th>
+          <th>WorkRule End DateTime Field</th>
+          <th>WorkRule Start DateTime Field</th>
+          <th>Is Time-Phased</th>
+        </tr>
+      </thead>
+      <tdata>
+        <tr class="odd">
+          <td class="strongleft">Active Resources</td>
+          <td>Field Service - Match Boolean</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>IsActive</td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Count Rule</td>
+          <td>Field Service - Count Rule</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td>Use a Count work rule type to restrict appointment scheduling based on assignments, hours worked, or a custom value. It’s a great way to prevent overloading your workers or their vehicles.</td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Designated Work</td>
+          <td>Field Service - TimeSlot Designated Work</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Due Date</td>
+          <td>Field Service - Match Time Rule</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>true</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedEndTime</td>
+          <td>Before or Equal to</td>
+          <td>DueDate</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Earliest Start Permitted</td>
+          <td>Field Service - Match Time Rule</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>true</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Later than or Equal to</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Excluded Resources</td>
+          <td>Field Service - Excluded Resources</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Field Service - Capacity Limit Rule</td>
+          <td></td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Finish</td>
+          <td>Field Service - Match Time Rule</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before or Equal to</td>
+          <td>ArrivalWindowEndTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Match Contractor Checkbox Requirement</td>
+          <td>Field Service - Match Fields</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td>Is_Contractor__c</td>
+          <td>Requires_Contractor__c</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Match Skills</td>
+          <td>Field Service - Match Skills</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>false</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Match Territory</td>
+          <td>Field Service - Match Territory</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Maximum Travel From Home</td>
+          <td>Field Service - Maximum Travel From Home</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Required Service Resource</td>
+          <td>Field Service - Required Resources</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Resource Availability</td>
+          <td>Field Service - Service Resource Availability</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td>0.0</td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Resource Availability - Capacity Resource</td>
+          <td>Field Service - Service Resource Availability</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td>This rule is relevant only for Capacity Based Resources and it does not create breaks</td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td>0.0</td>
+          <td></td>
+          <td>false</td>
+          <td>sdo_sfs_capacity_based_resource__c</td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td>100.0</td>
+          <td>100.0</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Resource Availability - Dynamic Breaks</td>
+          <td>Field Service - Service Resource Availability</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td>This rule is relevant only for non capacity based resources and it has 2 dynamic breaks between 120 and 180 and between 300 and 360</td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td>0.0</td>
+          <td></td>
+          <td>false</td>
+          <td>sdo_sfs_non_capacity_based_resource__c</td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td>100.0</td>
+          <td>100.0</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Resource Availability - Non Capacity Resource</td>
+          <td>Field Service - Service Resource Availability</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td>This rule is relevant only for non capacity based resources and it has 1 fixed break at noon</td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td>0.0</td>
+          <td></td>
+          <td>false</td>
+          <td>sdo_sfs_non_capacity_based_resource__c</td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td>100.0</td>
+          <td>100.0</td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Service Appointment Visiting Hours</td>
+          <td>Field Service - Service Appointment Visiting Hours</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Service Crew Resource Availability</td>
+          <td>Field Service - Service Crew Resources Availability</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>true</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Start</td>
+          <td>Field Service - Match Time Rule</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Later than or Equal to</td>
+          <td>ArrivalWindowStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Working Territories</td>
+          <td>Field Service - Working Territories</td>
+          <td>true</td>
+          <td>=</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>9.0</td>
+          <td>false</td>
+          <td>true</td>
+          <td>true</td>
+          <td>Distance</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td>ServiceTerritory</td>
+          <td>SchedStartTime</td>
+          <td>Before</td>
+          <td>EarliestStartTime</td>
+          <td>00:00</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+          <td>false</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+      </tdata>
+    </table>
+    <h1 class="header">Service Goals</h1>
+    <table id="svc-goals" class="ui responsive collapsing celled table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Type</th>
+          <th>Object Group Field</th>
+          <th>Prioritize Resource</th>
+          <th>Resource Group Field</th>
+          <th>Resource Priority Field</th>
+          <th>Ignore Home Base Coordinates</th>
+        </tr>
+      </thead>
+      <tdata>
+        <tr class="odd">
+          <td class="strongleft">ASAP</td>
+          <td>ASAP</td>
+          <td></td>
+          <td>Least Qualified</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Minimize Overtime</td>
+          <td>Minimize Overtime</td>
+          <td></td>
+          <td>Least Qualified</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Minimize Travel</td>
+          <td>Minimize Travel</td>
+          <td></td>
+          <td>Least Qualified</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Preferred Service Resource</td>
+          <td>Preferred Resource</td>
+          <td></td>
+          <td>Least Qualified</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+        <tr class="odd">
+          <td class="strongleft">Resource Priority</td>
+          <td>Resource Priority</td>
+          <td></td>
+          <td>Least Qualified</td>
+          <td></td>
+          <td>fsl__priority__c</td>
+          <td>false</td>
+        </tr>
+        <tr class="even">
+          <td class="strongleft">Skill Level</td>
+          <td>Skill Level</td>
+          <td></td>
+          <td>Most Qualified</td>
+          <td></td>
+          <td></td>
+          <td>false</td>
+        </tr>
+      </tdata>
+    </table>
+    <script>
+      $( document ).ready( function ()
+        {
+          initDataTableWithButtons(
+            '#policies',
+            'Scheduling Policies',
+            true,
+            true,
+            {},
+            true,
+          );
+
+          initDataTableWithButtons(
+            '#work-rules',
+            'Work Rules',
+            true,
+            true,
+            {},
+            true,
+          );
+
+          initDataTableWithButtons(
+            '#svc-goals',
+            'Service Goals / Objectives',
+            true,
+            true,
+            {},
+            true,
+          );
+
+          // Hide rows in #policy-matrix where all columns except the first are empty
+          let unusedRulesAndObjectives = [];
+          $('#policy-matrix tbody tr').each(function() {
+            var $cells = $(this).find('td');
+            if ($cells.length < 2) return; // Skip rows with less than 2 cells, these are rule and objective headers
+
+            // Check if all cells except the first are empty
+            var allEmpty = true;
+            $cells.slice(1).each(function() {
+              if ($(this).text().trim() !== '') {
+                allEmpty = false;
+                return false; // break
+              }
+            });
+            if (allEmpty) {
+              $(this).hide();
+              unusedRulesAndObjectives.push($cells.first().text().trim());
+            }
+          });
+          // If there are unused rules or objectives, display a list
+          if (unusedRulesAndObjectives.length > 0) {
+            $('#policy-matrix').after(
+              '<div class="ui warning message"><div class="header">Unused Rules and Objectives</div>' +
+              '<p>The following rules and objectives are not used by any scheduling policies: ' +
+              unusedRulesAndObjectives.join(', ') + '</p></div>'
+            );
+          }
+        } );</script>
+  </body>
+</html>

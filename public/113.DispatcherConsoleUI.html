@@ -1,0 +1,356 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <title>Dispatcher Console UI</title>
+  </head>
+  <body style="padding:16px">
+    <h1 class="ui header">Dispatcher Console UI</h1>
+    <h2 class="ui header">Gantt Configurations</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Default scheduling policy</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Customer First</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Gantt chart timezone</td>
+          <td>user</td>
+        </tr>
+        <tr>
+          <td>Show secondary Service Territory Members on Gantt chart</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Show local time in Gantt chart tooltip</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Show utilization on the Gantt</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Enable resource filtering by skills in dispatcher console</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Enable Custom Filters</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Use advanced filtering for the service appointment list</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Gantt chart week start</td>
+          <td>Monday</td>
+        </tr>
+        <tr>
+          <td>Initial Gantt loading days boundaries</td>
+          <td>2</td>
+        </tr>
+        <tr>
+          <td>Time intervals when dragging on Gantt</td>
+          <td>15</td>
+        </tr>
+        <tr>
+          <td>Maximum travel hours displayed on gantt</td>
+          <td>24</td>
+        </tr>
+        <tr>
+          <td>Online Offset In Minutes</td>
+          <td>30</td>
+        </tr>
+        <tr>
+          <td>Gantt Chatter Post Destination</td>
+          <td>wo</td>
+        </tr>
+        <tr>
+          <td>Show absences on resource map</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td class="blue" colspan="2">
+            <b>Actions shown on the appointment list</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Unused Actions</td>
+          <td>
+            <div class="ui list">
+              <div class="item">Check Rules</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Dropdown Actions</td>
+          <td>
+            <div class="ui list">
+              <div class="item">Optimize</div>
+              <div class="item">Flag-Unflag</div>
+              <div class="item">Unschedule</div>
+              <div class="item">Bundle</div>
+              <div class="item">Unbundle</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td>Shown Actions</td>
+          <td>
+            <div class="ui list">
+              <div class="item">Schedule</div>
+              <div class="item">Dispatch</div>
+            </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Rules Validation</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Validate rules after indirect Gantt updates</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Rule Validation Frequency</td>
+          <td>Always</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Utilization Views</b>
+          </td>
+        </tr>
+        <tr>
+          <td>High utilization (%)</td>
+          <td>150</td>
+        </tr>
+        <tr>
+          <td>Medium utilization (%)</td>
+          <td>100</td>
+        </tr>
+        <tr>
+          <td>Extensive travel alert</td>
+          <td>33</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Resource Calendar</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Medium utilization (hours)</td>
+          <td>6</td>
+        </tr>
+        <tr>
+          <td>Low utilization (hours)</td>
+          <td>1</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Extended Custom Permissions</b>
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Dispatcher View Customizations</b>
+          </td>
+        </tr>
+        <tr>
+          <td>External CSS</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>External JS</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="blue" colspan="2">
+            <b>Service VisualForce pages</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Service - Main Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf002_ServiceExpertLightboxForm</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service - Chatter Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0993_ServiceChatter</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service - Related List Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0995_WorkWorderRelatedLists</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service - Account Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf017_AccountLightbox</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service - Custom Tab 1</td>
+          <td />
+        </tr>
+        <tr>
+          <td>Service - Custom Tab 2</td>
+          <td />
+        </tr>
+        <tr>
+          <td class="blue" colspan="2">
+            <b>Work Order VisualForce pages</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order - Main Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0999_WorkOrderLightbox</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item - Main Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0998_WorkOrderLineItemLightbox</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order - Chatter Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0996_WorkOrderChatter</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item - Chatter Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0997_WorkOrderLineItemChatter</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order - Related List Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0995_WorkWorderRelatedLists</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Work Order Line Item - Related List Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0994_WorkWorderLineItemRelatedLists</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="blue" colspan="2">
+            <b>Resource VisualForce pages</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Resource - Main Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf011_ResourceLightboxForm</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Resource - Chatter Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf004_ResourceChatter</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Resource - Related List Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf0018_ResourceLB_RelatedLists</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Resource - Custom Tab 1</td>
+          <td />
+        </tr>
+        <tr>
+          <td>Resrouce - Custom Tab 2</td>
+          <td />
+        </tr>
+        <tr>
+          <td class="blue" colspan="2">
+            <b>Employee Absences VisualForce pages</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Employee Absences - Main Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf012_AbsenceLightboxForm</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Employee Absences - Chatter Tab</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">FSL__vf005_AbsenceChatter</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Updating the Gantt</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Enhanced Live Updates</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Use enhanced capabilities for live Gantt updates</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Timed Updates</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Seconds between Gantt refreshes</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Live Updates</b>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">-- TODO: Figure out where these settings are. --</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

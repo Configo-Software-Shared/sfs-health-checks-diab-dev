@@ -1,0 +1,352 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <title>Global Actions</title>
+  </head>
+  <body style="padding:16px">
+    <h1 class="ui header">Global Actions</h1>
+    <h2 class="ui header">Derivations</h2>
+    <h3 class="ui header">Account</h3>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Derivation for object</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Account</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Active</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Properties</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Street</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingStreet</div>
+          </td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingCity</div>
+          </td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingState</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingCountry</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Zip Code</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingPostalCode</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Latitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingLatitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Longitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ShippingLongitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Lookup From Work Order</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">AccountId<div class="detail">WorkOrder Field</div></div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 class="ui header">Work Order</h3>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Derivation for object</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">WorkOrder</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Active</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Properties</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Street</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Street</div>
+          </td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">City</div>
+          </td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">State</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Country</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Zip Code</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">PostalCode</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Latitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Latitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Longitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Longitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service Territory</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ServiceTerritoryId</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Default Work Type</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">WorkTypeId</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h3 class="ui header">Work Order Line Item</h3>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Derivation for object</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">WorkOrderLineItem</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Active</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td class="active" colspan="2">
+            <b>Properties</b>
+          </td>
+        </tr>
+        <tr>
+          <td>Street</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Street</div>
+          </td>
+        </tr>
+        <tr>
+          <td>City</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">City</div>
+          </td>
+        </tr>
+        <tr>
+          <td>State</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">State</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Country</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Country</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Zip Code</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">PostalCode</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Latitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Latitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Longitude</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Longitude</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Service Territory</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">ServiceTerritoryId</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Default Work Type</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">WorkTypeId</div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Appointment Booking</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Default scheduling policy</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Customer First</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Default operating hours</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Field Availability San Francisco</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Ideal grading threshold</td>
+          <td>90</td>
+        </tr>
+        <tr>
+          <td>Recommended grading threshold</td>
+          <td>70</td>
+        </tr>
+        <tr>
+          <td>Minimum Grade</td>
+          <td>0</td>
+        </tr>
+        <tr>
+          <td>Number of hours for initial appointment search</td>
+          <td>72</td>
+        </tr>
+        <tr>
+          <td>Show grades explanation</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Custom CSS (cascading style sheet)</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td>Disable service territory picker in appointment booking</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+        <tr>
+          <td>Pin three highest graded time slots to the top</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Open extended view by default</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Automatically search for scheduling options</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <h2 class="ui header">Emergency Wizard</h2>
+    <table class="ui very basic collapsing table">
+      <tbody>
+        <tr>
+          <td>Emergency scheduling policy</td>
+          <td>
+            <div class="ui green label" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">Emergency</div>
+          </td>
+        </tr>
+        <tr>
+          <td>Last known location validity</td>
+          <td>20</td>
+        </tr>
+        <tr>
+          <td>Ideal availability grad</td>
+          <td>30</td>
+        </tr>
+        <tr>
+          <td>Good availability grade</td>
+          <td>60</td>
+        </tr>
+        <tr>
+          <td>Emergency search timeframe</td>
+          <td>360</td>
+        </tr>
+        <tr>
+          <td>Allow Chatter post</td>
+          <td>
+            <i class="icon green checkmark" />
+          </td>
+        </tr>
+        <tr>
+          <td>Emergency Chatter Post Destination</td>
+          <td>Parent Record Feed</td>
+        </tr>
+        <tr>
+          <td>Pin After Dispatch</td>
+          <td>
+            <i class="icon red remove" />
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>
