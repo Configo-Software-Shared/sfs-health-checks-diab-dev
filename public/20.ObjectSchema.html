@@ -142,7 +142,7 @@
       }
 
       let type = field.type;
-      if ( typeof type === 'object' )
+      if ( type !== null && typeof type === 'object' )
       {
         if ( type.type === 'picklist' )
         {
