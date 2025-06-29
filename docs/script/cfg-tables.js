@@ -37,6 +37,40 @@ function setUpColumnFiltering(id, api) {
 }
 
 /**
+ * Clears all column filters in a DataTable.
+ * @param {string} id - Table selector.
+ */
+function clearAllFilters(tableId) {
+  $(`${tableId} .filters th input`).each(function () {
+    $(this).val('').trigger('change');
+  });
+}
+
+/**
+ * Sets the filter value for a specific column in a DataTable.
+ * @param {string} tableId - Table selector.
+ * @param {number} columnIndex - Index of the column to filter.
+ * @param {string} value - Value to set as the filter.
+ */
+function setColumnFilter(tableId, columnIndex, value) {
+  const $input = $(`${tableId} .filters th:eq(${columnIndex}) input`);
+  if ($input.length > 0) {
+    $input.val(value).trigger('change');
+  }
+}
+
+/**
+ * Scrolls the specified table into view smoothly and centers it in the viewport.
+ * @param {string} tableId - Table selector.
+ */
+function scrollTableIntoView(tableId) {
+  const tableElem = document.querySelector(tableId);
+  if (tableElem) {
+    tableElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+}
+
+/**
  * Renders a list for DataTable display/filter.
  */
 function renderList(data, type) {
