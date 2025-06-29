@@ -28,13 +28,23 @@
         </tr>
       </thead>
     </table>
+    <h1>Service Territory Memberships</h1>
+    <table id="territory-memberships" class="ui responsive celled table">
+      <thead>
+        <tr class="header">
+          <th>Service resource</th>
+          <th>Primary territory memberships</th>
+          <th>Secondary territory memberships</th>
+        </tr>
+      </thead>
+    </table>
     <script>
   const summaryData = [
 { "name": "Acme Partners Territory", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability San Francisco]", "value": "Field Availability San Francisco" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
 { "name": "London Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[London Contact Center Workforce]", "value": "London Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Los Angeles", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability Los Angeles]", "value": "Field Availability Los Angeles" }, "primaryMemberCount": 11, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Oakland Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Palo Alto Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Los Angeles", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability Los Angeles]", "value": "Field Availability Los Angeles" }, "primaryMemberCount": 13, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
+{ "name": "Oakland Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 1, "secondaryOperatingHours": [ ] },
+{ "name": "Palo Alto Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 1, "secondaryOperatingHours": [ ] },
 { "name": "Repair Depot", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Base Calendar]", "value": "Base Calendar" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
 { "name": "San Francisco Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Contact Center Workforce]", "value": "San Francisco Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
 { "name": "San Francisco Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Operating Hours]", "value": "San Francisco Operating Hours" }, "primaryMemberCount": 6, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
@@ -43,36 +53,138 @@
 { "name": "Virtual Trainers", "parents": [ ], "operatingHours": { "unresolved": "OperatingHours[Id=0OHKc000000gPEYOA2]", "value": "0OHKc000000gPEYOA2" }, "primaryMemberCount": 4, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null }
 ];
 
-      $( document ).ready( function ()
-        {
-          initDataTableWithButtons(
-            '#territories-summary',
-            'Service Territory Summary',
-            true,
-            true,
-            {
-              data: summaryData,
-              columns: [
-                { data: 'name', title: 'Name' },
-                { data: 'parents', title: 'Parents',
-                  render: renderXoomReferences(false, 'breadcrumb', (item) => item, '<span class="divider">/</span>') },
-                { data: 'operatingHours', title: 'Operating hours', render: renderXoomReference(false) },
-                { data: 'primaryMemberCount', title: 'Primary members' },
-                { data: 'primaryOperatingHours', title: 'Primary op hours', render: renderXoomReferences(false) },
-                { data: 'secondaryMemberCount', title: 'Secondary members' },
-                { data: 'secondaryOperatingHours', title: 'Secondary op hours', render: renderXoomReferences(false) }
-              ],
-              columnDefs: [
-                {
-                  targets: [1, 2, 4, 6],
-                  type: 'html',
-                },
-              ],
-              pageLength: 20,
-              lengthMenu: [20, 40, 70, 100]
-            }, true,
-          );
+  const membershipData = [
+{ "name": "Acme Partners (acme.dispatcher@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Admin User (admin@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Alan Reed (areed@ul.agent)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Alexander Raneri (alexanderraneri.x5hciw4wfubt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Andre Mcgee (andre.mcgee@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": null },
+{ "name": "Andy James (andyjames.myfzbvkap6rn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Anita Gonzalez (anita.gonzalez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ] },
+{ "name": "Asset Testing as Resource (swalizarif@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Asset Testing ()", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Carrie Olson (carrie.olson@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ] },
+{ "name": "Connie Ruiz (connieruiz.xohnr4610gtt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
+{ "name": "Deanna Marsh (deanna.marsh@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
+{ "name": "Electrical Team ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Gloria Barnes (gloriabarnes.lqi5wed8cjjn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Harry Long (harrylong.honlycxr8vkt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Installation Team A ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Installation Team B ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "James Clifton (jamesclifton.rhde32xuvlyn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "James Harrington (james.harrington@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
+{ "name": "Jane Austin (janeaustin.wzxsmseq0oba@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Janet Jones (janetjones.hh0wi2bw56qb@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Janet Martinez (janet.martinez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
+{ "name": "Janice Gonzales (janicegonzales.ga6rvptui1hz@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Jim Matthews (jimmatthews.bo2xe5zdjzui@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Keith Dorsey (keith.dorsey@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
+{ "name": "Lamar Smith (lamarsmith.fco3m0zjkyva@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Lisa Hartman (lisa.hartman@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
+{ "name": "Louise Martin (louisemartin.07q1x3xfldgy@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Mark Mayo (mark.mayo@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
+{ "name": "Martino Castanon (martinocastanon.n5vtq1k6i3du@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Mary Adams (maryadams.sngxpoqzkw2a@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Matthew Parker (matthewparker.ttxm9cwy2fgz@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Melissa Wood (melissawood.dhtrsp2deayh@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Pam Lawison (pamlawison.ja4hw0pl7xei@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Paul Morrison (paulmorrison.ocddetq6acbd@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
+{ "name": "Paula Wright (paula.wright@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
+{ "name": "Prakash Das (prakash.das@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": null },
+{ "name": "Ralph Clark (ralphclark.qgk9oneazgqo@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Russell Perez (russell.perez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
+{ "name": "Safety Simulator 1kW ()", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
+{ "name": "Silver Partners (sean.silver@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Tim Service (tim.service@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
+{ "name": "Tina Le (tina.le@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
+{ "name": "Vivek Rathod (vrathod@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
+{ "name": "Xavier Acme (xavieracme.fzaoycaepxbm@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
+{ "name": "Yvette Acme (yvette.acme@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
+{ "name": "Zach Acme (zach.acme@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
+{ "name": "Zachary Garcia (zachary.garcia@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null }
+];
 
-        } );</script>
+  /**
+    * Renders a member count as a clickable link that, when clicked,
+    * clears all filters in #territory-memberships, sets the filter for the
+    * appropriate column to the given territory name, and focuses the table.
+    * @param {string} tableId - Table selector.
+    * @param {number} columnIndex - The index of the column to filter on.
+    * @returns {function} - DataTables render function.
+    */
+  function renderMemberCount(tableId, columnIndex) {
+    return function (data, type, row, meta) {
+      if (type !== 'display' || !row || !row.name || data === 0) return data;
+      
+      // row.name is the territory name
+      const territoryName = row.name;
+      
+      // Escape for HTML
+      const safeName = String(territoryName).replace(/"/g, '&quot;');
+      
+      return `<a href="#" onclick="
+        clearAllFilters('${tableId}');
+        setColumnFilter('${tableId}', ${columnIndex}, '\\\\[${safeName}\\\\]');
+        scrollTableIntoView('${tableId}');
+        return false;
+      ">${data}</a>`;
+    };
+  }
+
+  $( document ).ready( function ()
+    {
+      initDataTableWithButtons(
+        '#territories-summary',
+        'Service Territory Summary',
+        true,
+        true,
+        {
+          data: summaryData,
+          columns: [
+            { data: 'name', title: 'Name' },
+            { data: 'parents', title: 'Parents',
+              render: renderXoomReferences(false, 'breadcrumb', (item) => item, '<span class="divider">/</span>') },
+            { data: 'operatingHours', title: 'Operating hours', render: renderXoomReference(false) },
+            { data: 'primaryMemberCount', title: 'Primary members', render: renderMemberCount('#territory-memberships', 1) },
+            { data: 'primaryOperatingHours', title: 'Primary op hours', render: renderXoomReferences(false) },
+            { data: 'secondaryMemberCount', title: 'Secondary members', render: renderMemberCount('#territory-memberships', 2) },
+            { data: 'secondaryOperatingHours', title: 'Secondary op hours', render: renderXoomReferences(false) }
+          ],
+          columnDefs: [
+            {
+              targets: [1, 2, 4, 6],
+              type: 'html',
+            },
+          ],
+          pageLength: 20,
+          lengthMenu: [20, 40, 70, 100]
+        }, true,
+      );
+
+      initDataTableWithButtons(
+        '#territory-memberships',
+        'Service Territory Memberships',
+        true,
+        true,
+        {
+          data: membershipData,
+          columns: [
+            { data: 'name', title: 'Name' },
+            { data: 'primaryTerritories', title: 'Primary territories', render: renderXoomReferences(false) },
+            { data: 'secondaryTerritories', title: 'Secondary territories', render: renderXoomReferences(false) }
+          ],
+          columnDefs: [
+            {
+              targets: [1, 2],
+              type: 'html',
+            },
+          ],
+          pageLength: 20,
+          lengthMenu: [20, 40, 70, 100]
+        },
+      );
+
+    }
+  );</script>
   </body>
 </html>
