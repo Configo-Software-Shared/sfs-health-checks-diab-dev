@@ -66,7 +66,7 @@ function setColumnFilter(tableId, columnIndex, value) {
 function scrollTableIntoView(tableId) {
   const tableElem = document.querySelector(tableId);
   if (tableElem) {
-    tableElem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    tableElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 }
 
