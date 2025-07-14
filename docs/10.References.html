@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="en" xmlns:xoom="urn:xmlns:zanyants:xoom">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="xomIndex.js"></script>
+    <title>References</title>
+    <style>
+      tbody.master-table tr:hover {
+        background-color: whitesmoke !important;
+      }
+
+      tbody.master-table tr.clicked-highlight {
+        background-color: rgb(252, 251, 213) !important;
+      }
+
+      tbody.master-table tr.clicked-highlight:hover {
+        background-color: rgb(234, 232, 205) !important;
+      }
+
+      .cfg-item {
+        cursor: pointer;
+        color: #2185d0;
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body style="padding: 16px">
+    <h2 class="ui header">References</h2>
+    <table id="referencesTable" class="ui celled table" style="width: 100%">
+      <thead>
+        <tr class="header">
+          <th>Item ID</th>
+          <th>Aliases</th>
+          <th>Dependents</th>
+          <th>Dependencies</th>
+        </tr>
+      </thead>
+      <tbody class="master-table" />
+    </table>
+
+    <div id="details" style="margin-top: 20px">
+      <div id="tab-menu" class="ui top attached tabular menu">
+        <a id="tab-menu-current" class="active item" data-tab="tab-current">
+          <i>Current</i>
+        </a>
+      </div>
+      <div
+        id="tab-current"
+        class="ui bottom attached active tab segment"
+        data-tab="tab-current"
+      >
+        <!--Container to display the current object.-->
+      </div>
+    </div>
+
+    <script>
+      // Calculate a dictionary of direct dependents
+      let dependents = {};
+      Object.values(xomIndex.items)
+        .filter((i) => i.dependencies)
+        .forEach(function (item) {
+          item.dependencies.forEach(function (dep) {
+            if (dependents[dep]) {
+              dependents[dep].push(item.id);
+            } else {
+              dependents[dep] = [item.id];
+            }
+          });
+        });
+
+      let data = Object.values(xomIndex.items)
+        .map(function (item) {
+          let ids = item.identities.map((identity) => identity.id);
+
+          return ids.map((id) => [
+            id,
+            ids.filter((alias) => alias !== id) ?? [],
+            dependents[id] ?? [],
+            item.dependencies ?? [],
+          ]);
+        })
+        .reduce((a, b) => a.concat(b), []);
+
+      function getImpactTreeData(itemId) {
+        let result = {};
+        let queue = [[itemId, 0]];
+        while (queue.length > 0) {
+          let [origin, level] = queue.pop();
+          let originStr = `${level}: ${origin}`;
+          let deps = dependents[origin];
+          if (deps) {
+            deps.forEach(function (id) {
+              if (id === itemId) {
+                return;
+              }
+
+              existing = result[id];
+              if (existing) {
+                existing.origins.push(originStr);
+              } else {
+                result[id] = { id, level: level + 1, origins: [originStr] };
+                queue.push([id, level + 1]);
+              }
+            });
+          }
+        }
+        return Object.values(result);
+      }
+
+      function getDependencyTreeData(itemId) {
+        let result = {};
+        let queue = [[itemId, 0]];
+        while (queue.length > 0) {
+          let [origin, level] = queue.pop();
+          let originStr = `${level}: ${origin}`;
+          let item = xomIndex.items[origin];
+          if (!item) {
+            item = Object.values(xomIndex.items).find((i) =>
+              i.identities.some((id) => id.id === origin)
+            );
+          }
+          if (!item) {
+            console.log(`Item ${origin} not found`); // This should not happen with a complete XOM index.
+            continue;
+          }
+          let deps = item.dependencies;
+          if (deps) {
+            deps.forEach(function (id) {
+              if (id === itemId) {
+                return;
+              }
+
+              existing = result[id];
+              if (existing) {
+                existing.origins.push(originStr);
+              } else {
+                result[id] = { id, level: level + 1, origins: [originStr] };
+                queue.push([id, level + 1]);
+              }
+            });
+          }
+        }
+        return Object.values(result);
+      }
+
+      function renderItem(data, type) {
+        if (type == "display") {
+          return `<div class="cfg-item">${data}</div>`;
+        } else {
+          return data;
+        }
+      }
+
+      function renderDetailsItem(data, type) {
+        if (type == "display") {
+          return `<div class="cfg-item" onClick="handleDetailsItemClick('${data}')">${data}</div>`;
+        } else {
+          return data;
+        }
+      }
+
+      function renderItemListMax(maxItems) {
+        return function (data, type) {
+          if (Array.isArray(data) && data.length > 0) {
+            if (type == "filter") {
+              return data.join("||");
+            } else if (type == "display") {
+              let maxItemsInList = maxItems > 0 ? maxItems : data.length;
+              let extra = data.length - maxItemsInList;
+              let items = extra > 1 ? "items" : "item";
+              return (
+                '<div class="ui list">' +
+                data
+                  .slice(0, maxItemsInList)
+                  .map(
+                    (id) =>
+                      `<div class="item cfg-item" onclick="jumpToItem('${id}')">${id}</div>`
+                  )
+                  .join("") +
+                (extra > 0 ?
+                  '<div class="item" style="color: green">[ + ' +
+                  extra +
+                  " " +
+                  items +
+                  " ]</div>"
+                : "") +
+                "</div>"
+              );
+            } else {
+              return data[0];
+            }
+          } else return null;
+        };
+      }
+
+      let renderItemList = renderItemListMax(0);
+
+      function getHtmlIdForItem(id) {
+        return id.replace(/\W/g, (match) => `-${match.charCodeAt(0)}-`);
+      }
+
+      function getItemDetailsHtml(data, dependencyTreeData, impactTreeData) {
+        let htmlId = getHtmlIdForItem(data[0]);
+        let additionalDetail = false;
+        let result = `<h2 class="ui header">${data[0]}</h2>`;
+        if (Array.isArray(data[1]) && data[1].length > 0) {
+          result += `
+            <table class="ui very basic collapsing celled table">
+              <tbody>
+                <tr>
+                  <td>Aliases</td>
+                  <td>${renderItemList(data[1], "display")}</td>
+                </tr>
+              </tbody>
+            </table>
+          `;
+          additionalDetail = true;
+        }
+        if (dependencyTreeData?.length > 0) {
+          result += `
+            <h3 class="ui header">Dependency tree</h3>
+            <table id="${htmlId}-deps" class="ui celled table">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Level</th>
+                  <th>Origins</th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          `;
+          additionalDetail = true;
+        }
+        if (impactTreeData?.length > 0) {
+          result += `
+            <h3 class="ui header">Impact tree</h3>
+            <table id="${htmlId}-impact" class="ui celled table">
+              <thead>
+                <tr>
+                  <th>Id</th>
+                  <th>Level</th>
+                  <th>Origins</th>
+                </tr>
+              </thead>
+              <tbody />
+            </table>
+          `;
+          additionalDetail = true;
+        }
+        if (!additionalDetail) {
+          result += `
+            <div class="ui message">
+              <div class="header">No additional details available</div>
+              <p>This item has no aliases, dependencies, or dependent items.</p>
+            </div>
+          `;
+        }
+        return result;
+      }
+
+      function addDetailsDataTables(
+        itemId,
+        dependencyTreeData,
+        impactTreeData
+      ) {
+        let htmlId = getHtmlIdForItem(itemId);
+
+        if (dependencyTreeData?.length > 0) {
+          initDataTableWithButtons(
+            `#${htmlId}-deps`,
+            `${itemId} Dependencies`,
+            true,
+            true,
+            {
+              data: Object.values(dependencyTreeData),
+              columns: [
+                { data: "id", title: "Id", render: renderDetailsItem },
+                { data: "level", title: "Level" },
+                {
+                  data: "origins",
+                  title: "Origins",
+                  render: renderItemList,
+                  visible: false,
+                },
+              ],
+              order: [
+                [1, "asc"],
+                [0, "asc"],
+              ],
+            }
+          );
+        }
+
+        if (impactTreeData?.length > 0) {
+          initDataTableWithButtons(
+            `#${htmlId}-impact`,
+            `${itemId} Impact Tree`,
+            true,
+            true,
+            {
+              data: Object.values(impactTreeData),
+              columns: [
+                { data: "id", title: "Id", render: renderDetailsItem },
+                { data: "level", title: "Level" },
+                {
+                  data: "origins",
+                  title: "Origins",
+                  render: renderItemList,
+                  visible: false,
+                },
+              ],
+              order: [
+                [1, "asc"],
+                [0, "asc"],
+              ],
+            }
+          );
+        }
+      }
+
+      function displayDetails(itemId, findData, scrollIntoView) {
+        const existingTab = $("#tab-menu a").filter(
+          (i, e) => e.innerText === itemId
+        )[0];
+        if (existingTab) {
+          existingTab.click();
+        } else {
+          const data = findData(itemId);
+          const dependencyTreeData = getDependencyTreeData(itemId);
+          const impactTreeData = getImpactTreeData(itemId);
+          document.getElementById("tab-current").innerHTML = getItemDetailsHtml(
+            data,
+            dependencyTreeData,
+            impactTreeData
+          );
+          addDetailsDataTables(itemId, dependencyTreeData, impactTreeData);
+
+          const menuItem = document.getElementById("tab-menu-current");
+          menuItem.innerHTML = `<i>${itemId}</i>`;
+          menuItem.click();
+        }
+
+        if (scrollIntoView) {
+          document
+            .getElementById("tab-menu")
+            .scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      function addAndDisplayDetails(itemId, findData, showTab, scrollIntoView) {
+        let tab = $("#tab-menu a").filter((i, e) => e.innerText === itemId)[0];
+        if (!tab) {
+          const newTabDetail = document.createElement("div");
+          newTabDetail.setAttribute("class", "ui bottom attached tab segment");
+          newTabDetail.setAttribute("data-tab", itemId);
+          document.getElementById("details").appendChild(newTabDetail);
+
+          tab = document.createElement("a");
+          tab.setAttribute("class", "item");
+          tab.setAttribute("data-tab", itemId);
+          tab.innerText = itemId;
+          document.getElementById("tab-menu").appendChild(tab);
+
+          const data = findData(itemId);
+          const dependencyTreeData = getDependencyTreeData(itemId);
+          const impactTreeData = getImpactTreeData(itemId);
+          newTabDetail.innerHTML = getItemDetailsHtml(
+            data,
+            dependencyTreeData,
+            impactTreeData
+          );
+          addDetailsDataTables(itemId, dependencyTreeData, impactTreeData);
+
+          $(".menu .item").tab();
+        }
+
+        if (showTab) {
+          tab.click();
+        }
+
+        if (scrollIntoView) {
+          document
+            .getElementById("tab-menu")
+            .scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      function findItem(itemId) {
+        return data.find((item) => item[0] === itemId);
+      }
+
+      let refTable;
+
+      function jumpToItem(xoomId) {
+        refTable.page.jumpToData(xoomId, 0);
+
+        // Find the row with the matching item and trigger a click on its .cfg-item
+        setTimeout(function () {
+          $("#referencesTable tbody tr").each(function () {
+            const cell = $(this).find(".cfg-item").first();
+            if (cell.text() === xoomId) {
+              cell.trigger("click");
+              return false; // break loop
+            }
+          });
+        }, 100); // Delay to ensure table redraw
+      }
+
+      function handleDetailsItemClick(xoomId) {
+        addAndDisplayDetails(xoomId, findItem, true, true);
+      }
+
+      jQuery.fn.dataTable.Api.register(
+        "page.jumpToData()",
+        function (data, column) {
+          let pos = this.column(column, { order: "current" })
+            .data()
+            .indexOf(data);
+
+          if (pos >= 0) {
+            let page = Math.floor(pos / this.page.info().length);
+            this.page(page).draw(false);
+          }
+
+          return this;
+        }
+      );
+
+      $(document).ready(function () {
+        refTable = initDataTable("#referencesTable", true, {
+          data: data,
+          columns: [
+            { render: renderItem },
+            { render: renderItemListMax(4) },
+            { render: renderItemListMax(4) },
+            { render: renderItemListMax(4) },
+          ],
+        });
+
+        let clickTimer = null;
+        let lastClickedItem = null;
+        $("#referencesTable tbody")
+          .on("click", ".cfg-item", function () {
+            if (clickTimer) {
+              clearTimeout(clickTimer);
+              clickTimer = null;
+              // Do nothing here; dblclick will handle
+            } else {
+              const itemId = this.innerText;
+              clickTimer = setTimeout(() => {
+                // perform single-click action
+                lastClickedItem?.removeClass("clicked-highlight");
+                lastClickedItem = $(this).closest("tr");
+                lastClickedItem.addClass("clicked-highlight");
+                displayDetails(itemId, findItem, true);
+                clickTimer = null;
+              }, 300);
+            }
+          })
+          .on("dblclick", ".cfg-item", function (e) {
+            e.preventDefault();
+            if (clickTimer) {
+              clearTimeout(clickTimer);
+              clickTimer = null;
+            }
+            const itemId = this.innerText;
+            addAndDisplayDetails(itemId, findItem, true, false);
+          });
+
+        $(".menu .item").tab();
+      });
+    </script>
+  </body>
+</html>

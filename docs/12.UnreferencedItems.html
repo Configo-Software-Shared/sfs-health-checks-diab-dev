@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en" xmlns:xoom="urn:xmlns:zanyants:xoom">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="xomIndex.js"></script>
+    <title>Unreferenced Items</title>
+    <style>
+      tbody.master-table tr:hover {
+        background-color: whitesmoke !important;
+      }
+    </style>
+  </head>
+  <body style="padding: 16px">
+    <h2 class="ui header">Unreferenced Items</h2>
+    <table id="unreferencedTable" class="ui celled table" style="width: 100%">
+      <thead>
+        <tr class="header">
+          <th>Item ID</th>
+          <th>Dependencies</th>
+        </tr>
+      </thead>
+      <tbody class="master-table" />
+    </table>
+
+    <script>
+      let dependents = {};
+      Object.values(xomIndex.items)
+        .filter((i) => i.dependencies)
+        .forEach(function (item) {
+          item.dependencies.forEach(function (dep) {
+            if (dependents[dep]) {
+              dependents[dep].push(item.id);
+            } else {
+              dependents[dep] = [item.id];
+            }
+          });
+        });
+
+      let data = [];
+      Object.values(xomIndex.items)
+        .filter((item) => !(item.id in dependents))
+        .forEach((item) => {
+          data.push([item.id, item.dependencies ?? []]);
+        });
+
+      $(document).ready(function () {
+        initDataTableWithButtons(
+          "#unreferencedTable",
+          "Unreferenced Items",
+          false,
+          true,
+          {
+            data: data,
+            columns: [
+              {
+                data: 0,
+                title: "Item ID",
+              },
+              {
+                data: 1,
+                title: "Dependencies",
+                render: renderList,
+              },
+            ],
+          }
+        );
+      });
+    </script>
+  </body>
+</html>
