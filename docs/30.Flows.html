@@ -487,7 +487,7 @@
   function renderFlowCount(detailTableId, typeIndex, statusIndex, statusValue) {
     return function (data, type, row, meta) {
       if (type !== 'display' || !row || !row.type || data === 0) return data;
-      
+
       const name = row.type;
       const safeName = String(name).replace(/"/g, '&quot;');
       const secondFilter =
@@ -496,7 +496,7 @@
         : '';
       return `<a href="#" onclick="
         clearAllFilters('${detailTableId}');
-        setColumnFilter('${detailTableId}', ${typeIndex}, '\\\\b${safeName}\\\\b');
+        setColumnFilter('${detailTableId}', ${typeIndex}, '/^${safeName}$');
         ${secondFilter}
         scrollTableIntoView('${detailTableId}');
         return false;

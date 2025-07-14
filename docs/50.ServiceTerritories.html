@@ -115,16 +115,16 @@
   function renderMemberCount(tableId, columnIndex) {
     return function (data, type, row, meta) {
       if (type !== 'display' || !row || !row.name || data === 0) return data;
-      
+
       // row.name is the territory name
       const territoryName = row.name;
-      
+
       // Escape for HTML
       const safeName = String(territoryName).replace(/"/g, '&quot;');
-      
+
       return `<a href="#" onclick="
         clearAllFilters('${tableId}');
-        setColumnFilter('${tableId}', ${columnIndex}, '\\\\[${safeName}\\\\]');
+        setColumnFilter('${tableId}', ${columnIndex}, '/\\\\[${safeName}\\\\]');
         scrollTableIntoView('${tableId}');
         return false;
       ">${data}</a>`;
