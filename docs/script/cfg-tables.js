@@ -15,15 +15,19 @@ function setUpColumnFiltering(id, api) {
       .off('keyup change')
       .on('change', function () {
         $(this).attr('title', $(this).val());
-        const rx = '({search})';
+        let searchValue = this.value;
+        let useRegex = false;
+        if (searchValue && searchValue.startsWith('/')) {
+          // Remove the leading slash for regex search
+          searchValue = searchValue.substring(1);
+          useRegex = true;
+        }
         api
           .column(colIdx)
           .search(
-            this.value !== ''
-              ? rx.replace('{search}', `(((${this.value})))`)
-              : '',
-            this.value !== '',
-            this.value === ''
+            searchValue,
+            useRegex,
+            searchValue === '' // Use smart search when not empty
           )
           .draw();
       })
@@ -74,7 +78,7 @@ function scrollTableIntoView(tableId) {
  * Renders a list for DataTable display/filter.
  */
 function renderList(data, type) {
-  if (Array.isArray(data) && data.length > 0) {
+  if (data && Array.isArray(data) && data.length > 0) {
     if (type === 'filter') {
       return data.join('||');
     } else if (type === 'display') {
@@ -148,7 +152,6 @@ function initDataTable(id, filterColumns, options) {
     opts = {
       ...opts,
       orderCellsTop: true,
-      fixedHeader: true,
       initComplete: function () {
         setUpColumnFiltering(id, this.api());
       }
