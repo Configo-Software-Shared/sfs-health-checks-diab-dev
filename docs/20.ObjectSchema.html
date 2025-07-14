@@ -237,6 +237,16 @@
         } else {
           let objData = data.find((row) => row.name === objName);
           if (objData) {
+            // Destroy existing DataTable if it exists
+            const tableSelector = "#tab-current-fields-table";
+            const dataTable =
+              $.fn.DataTable.isDataTable(tableSelector) ?
+                $(tableSelector).DataTable()
+              : null;
+            if (dataTable) {
+              dataTable.destroy();
+            }
+
             document.getElementById("tab-current").innerHTML =
               getObjectDetailsHtml("tab-current", objData);
             initDataTableWithButtons(
@@ -265,7 +275,16 @@
 
       function addAndDisplayObjectDetails(objName, showTab, scrollIntoView) {
         let objTab = document.getElementById(`tab-obj-${objName}`);
+        let tabContent = document.querySelector(`[data-tab="${objName}"]`);
+
+        // Clean up orphaned content if tab doesn't exist but content does
+        if (objTab === null && tabContent !== null) {
+          tabContent.remove();
+          tabContent = null;
+        }
+
         if (objTab === null) {
+          // Create new tab and content
           let newTabDetail = document.createElement("div");
           newTabDetail.setAttribute("class", "ui bottom attached tab segment");
           newTabDetail.setAttribute("data-tab", objName);
@@ -275,12 +294,26 @@
           objTab.setAttribute("id", `tab-obj-${objName}`);
           objTab.setAttribute("class", "item");
           objTab.setAttribute("data-tab", objName);
-          objTab.innerText = objName;
+          objTab.innerHTML = `${objName} <i class="close icon" onclick="closeTab('${objName}', event)" style="margin-left: 0.5em; margin-right:-0.3em;"></i>`;
           document.getElementById("tab-menu").appendChild(objTab);
 
+          tabContent = newTabDetail;
+          $(".menu .item").tab();
+
+          // Populate the content
           let objData = data.find((row) => row.name === objName);
-          if (objData) {
-            newTabDetail.innerHTML = getObjectDetailsHtml(
+          if (objData && tabContent) {
+            // Destroy existing DataTable if it exists
+            const tableSelector = `#tab-obj-${objName}-fields-table`;
+            const dataTable =
+              $.fn.DataTable.isDataTable(tableSelector) ?
+                $(tableSelector).DataTable()
+              : null;
+            if (dataTable) {
+              dataTable.destroy();
+            }
+
+            tabContent.innerHTML = getObjectDetailsHtml(
               `tab-obj-${objName}`,
               objData
             );
@@ -293,10 +326,9 @@
                 pageLength: 50,
               }
             );
-          } else {
-            newTabDetail.innerHTML = `<div class="ui negative message">Object "${objName}" not found.</div>`;
+          } else if (tabContent) {
+            tabContent.innerHTML = `<div class="ui negative message">Object "${objName}" not found.</div>`;
           }
-          $(".menu .item").tab();
         }
 
         if (showTab) {
@@ -305,6 +337,37 @@
 
         if (scrollIntoView) {
           document.getElementById("tab-menu").scrollIntoView();
+        }
+      }
+
+      function closeTab(objName, event) {
+        event.stopPropagation(); // Prevent tab activation when clicking close button
+
+        const tabElement = document.getElementById(`tab-obj-${objName}`);
+        const tabContent = document.querySelector(`[data-tab="${objName}"]`);
+
+        if (tabElement && tabContent) {
+          // Destroy DataTable instance before removing DOM elements
+          const tableSelector = `#tab-obj-${objName}-fields-table`;
+          const dataTable =
+            $.fn.DataTable.isDataTable(tableSelector) ?
+              $(tableSelector).DataTable()
+            : null;
+          if (dataTable) {
+            dataTable.destroy();
+          }
+
+          // Remove tab and content
+          tabElement.remove();
+          tabContent.remove();
+
+          // If the closed tab was active, switch to the first tab
+          if (tabElement.classList.contains("active")) {
+            document.getElementById("tab-menu-current").click();
+          }
+
+          // Reinitialize tabs
+          $(".menu .item").tab();
         }
       }
 
