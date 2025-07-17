@@ -1,91 +1,150 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
 
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width" />
-  <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
 
-  <link rel="stylesheet" type="text/css"
-    href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
-  <link rel="stylesheet" type="text/css"
-    href="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
+    >
+      //
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"
+    >
+      //
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
+    >
+      //
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
+    >
+      //
+    </script>
+    <script
+      src="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"
+    >
+      //
+    </script>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
-  <script
-    src="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="xomIndex.js"></script>
+    <title>SFS Health Check Reports</title>
+  </head>
 
-  <script type="text/javascript" src="script/cfg-tables.js"></script>
-  <script type="text/javascript" src="xomIndex.js"></script>
-  <title>SFS Health Check Reports</title>
-</head>
+  <body style="padding: 16px">
+    <h1 class="ui header">SFS Health Check Reports</h1>
 
-<body style="padding:16px">
-
-  <h1 class="ui header">SFS Health Check Reports</h1>
-
-  <div class="ui relaxed divided list">
-    <div class="item">
-      <i class="large database middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="20.ObjectSchema.html">Object Schema</a>
-        <div class="description">Objects and their properties, fields and relationships.</div>
+    <div class="ui relaxed divided list">
+      <div class="item">
+        <i class="large database middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="20.ObjectSchema.html">Object Schema</a>
+          <div class="description">
+            Objects and their properties, fields and relationships.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large tasks middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="30.Flows.html">Flows</a>
+          <div class="description">
+            Flows, their counts by type, and their components.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large tasks middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="31.FlowBestPractices.html"
+            >Flows – Best Practices</a
+          >
+          <div class="description">
+            Violations of implementation best practices for flows.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large map middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="50.ServiceTerritories.html"
+            >Service Territories</a
+          >
+          <div class="description">
+            Service territories, their hierarchy and membership.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large stream middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="61.SchedulingPolicies.html"
+            >Scheduling Policies</a
+          >
+          <div class="description">
+            Scheduling policies, scheduling policy matrix, work rules, schedule
+            goals / objectives.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large project diagram middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="110.ServiceAppointmentLifeCycle.html"
+            >Service Appointment Life Cycle</a
+          >
+          <div class="description">
+            Service Appointment life cycle configuration as defined in Field
+            Service Settings.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large atom middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="111.GlobalActions.html">Global Actions</a>
+          <div class="description">
+            Derivations, appointment booking and emergency wizard settings as
+            defined in Field Service Settings.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large stream middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="112.Scheduling.html">Scheduling</a>
+          <div class="description">
+            Scheduling configuration as defined in Field Service Settings.
+          </div>
+        </div>
+      </div>
+      <div class="item">
+        <i class="large desktop middle aligned icon"></i>
+        <div class="content">
+          <a class="header" href="113.DispatcherConsoleUI.html"
+            >Dispatcher Console UI</a
+          >
+          <div class="description">
+            Scheduling configuration as defined in Field Service Settings.
+          </div>
+        </div>
       </div>
     </div>
-    <div class="item">
-      <i class="large tasks middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="30.Flows.html">Flows</a>
-        <div class="description">Flows, their counts by type, and their components.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large map middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="50.ServiceTerritories.html">Service Territories</a>
-        <div class="description">Service territories, their hierarchy and membership.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large stream middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="61.SchedulingPolicies.html">Scheduling Policies</a>
-        <div class="description">Scheduling policies, scheduling policy matrix, work rules, schedule goals / objectives.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large project diagram middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="110.ServiceAppointmentLifeCycle.html">Service Appointment Life Cycle</a>
-        <div class="description">Service Appointment life cycle configuration as defined in Field Service Settings.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large atom middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="111.GlobalActions.html">Global Actions</a>
-        <div class="description">Derivations, appointment booking and emergency wizard settings as defined in Field Service Settings.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large stream middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="112.Scheduling.html">Scheduling</a>
-        <div class="description">Scheduling configuration as defined in Field Service Settings.</div>
-      </div>
-    </div>
-    <div class="item">
-      <i class="large desktop middle aligned icon"></i>
-      <div class="content">
-        <a class="header" href="113.DispatcherConsoleUI.html">Dispatcher Console UI</a>
-        <div class="description">Scheduling configuration as defined in Field Service Settings.</div>
-      </div>
-    </div>
-  </div>
-
-</body>
-
+  </body>
 </html>
