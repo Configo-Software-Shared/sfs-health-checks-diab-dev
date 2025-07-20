@@ -115,6 +115,12 @@
             if ("elements" in data) {
               msg += `${msg ? "; " : ""}elements=(${data.elements.map((e) => renderElement(e, type)).join(", ")})`;
             }
+            if ("element" in data) {
+              msg += `${msg ? "; " : ""}${renderElement(data.element, type, "teal")}`;
+              if ("related" in data) {
+                msg += `: ${data.related.map((e) => renderElement(e, type, "yellow")).join(", ")}`;
+              }
+            }
             return msg;
           }
         }
