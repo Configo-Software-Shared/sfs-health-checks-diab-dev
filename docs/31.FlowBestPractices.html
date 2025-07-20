@@ -95,12 +95,12 @@
                 "</div>";
             }
             if ("elements" in data) {
-              msg += `<div>${data.elements.map((e) => renderElement(e, type, "teal"))}</div>`;
+              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${data.elements.map((e) => renderElement(e, type, "teal")).join("")}</div>`;
             }
             if ("element" in data) {
-              msg += `<div>${renderElement(data.element, type, "teal")}`;
+              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${renderElement(data.element, type, "teal")}`;
               if ("related" in data) {
-                msg += `<span>: </span><div style="margin-top:0.5em;display:inline-block;">${data.related.map((e) => renderElement(e, type, "yellow")).join("")}</div>`;
+                msg += `<span>: </span>${data.related.map((e) => renderElement(e, type, "yellow")).join("")}`;
               }
               msg += "</div>";
             }
