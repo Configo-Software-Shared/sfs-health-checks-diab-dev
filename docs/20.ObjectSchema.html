@@ -42,7 +42,7 @@
           <th>Key Prefix</th>
           <th>Fields</th>
           <th>Validation Rules</th>
-          <th>CustomObject</th>
+          <th>Customized</th>
         </tr>
       </thead>
     </table>
@@ -63,7 +63,14 @@
     <script>
       function renderObjectName(data, type, row, meta) {
         if (type === "display") {
-          return "<div class='name'>" + data + "</div>";
+          return (
+            `<div style="display: flex; align-items: center; gap: 8px;">
+              <div class="name">${data}</div>` +
+            (row.customObject ?
+              `<div class="ui basic tiny green label">customized</div>`
+            : "") +
+            `</div>`
+          );
         } else {
           return data;
         }
@@ -117,7 +124,7 @@
         if (data.customObject) {
           customObjectSection = `
             <tr>
-              <td>CustomObject</td>
+              <td>Customized</td>
               <td>true</td>
             </tr>`;
         }
@@ -172,7 +179,7 @@
                 <th>Label</th>
                 <th>Type</th>
                 <th>Flags</th>
-                <th>CustomObject</th>
+                <th>Customized</th>
               </tr>
             </thead>
             <tbody>`;
@@ -378,7 +385,7 @@
               { data: "keyPrefix" },
               { data: null, render: renderFieldCount },
               { data: null, render: renderValidationRuleCount },
-              { data: "customObject" },
+              { data: "customObject", visible: false },
             ],
           }
         );
