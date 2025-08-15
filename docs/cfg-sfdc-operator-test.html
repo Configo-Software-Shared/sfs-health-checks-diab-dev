@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operator Test - Multi-Character Operator Tokenization</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="calculator icon"></i>
+        <div class="content">
+          Operator Test
+          <div class="sub header">
+            Testing Multi-Character Operator Tokenization
+          </div>
+        </div>
+      </h1>
+
+      <div class="ui info message">
+        <div class="header">Test Purpose</div>
+        <p>
+          This page tests that multi-character operators (<=, >=, <>, ==, &&,
+          ||) are properly recognized as single operators and not split into
+          separate characters.
+        </p>
+      </div>
+
+      <!-- Token Analysis -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="bug icon"></i>
+          Token Analysis
+        </h3>
+        <p>Detailed analysis of how operators are tokenized:</p>
+        <div id="token-analysis"></div>
+      </div>
+
+      <!-- Visual Tests -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="eye icon"></i>
+          Visual Tests
+        </h3>
+        <p>These should show operators as single highlighted units:</p>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Comparison Operators:</h4>
+            <div id="comparison-tests"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Logical Operators:</h4>
+            <div id="logical-tests"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Equals Operator (==):</h4>
+            <div id="equals-tests"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Mixed Operators:</h4>
+            <div id="mixed-tests"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tokenization Debug -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="code icon"></i>
+          Tokenization Debug
+        </h3>
+        <p>Raw tokenization results for the equals operator test:</p>
+        <div id="tokenization-debug"></div>
+      </div>
+
+      <!-- Operator List -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="list icon"></i>
+          Recognized Operators
+        </h3>
+        <p>All operators that should be recognized:</p>
+        <div id="operator-list"></div>
+      </div>
+    </div>
+
+    <script>
+      // Test formulas
+      const testFormulas = {
+        // Comparison operators
+        gte: "[Amount] >= 1000",
+        lte: "[CloseDate] <= TODAY()",
+        ne: "[Status] <> 'Closed'",
+
+        // Logical operators
+        and: '[Type] = "Customer" && [Amount] > 5000',
+        or: '[Priority] = "High" || [Amount] >= 10000',
+
+        // Equals operator
+        equals: "IF (TEXT (SBQQ__ColumnOrder__c) == '', TRUE, FALSE)",
+        equals2: 'IF([Status] == "Active", "Yes", "No")',
+
+        // Mixed operators
+        mixed:
+          'IF([Status] = "Active" && [Amount] == 1000, "Match", "No Match")',
+        complex:
+          'IF(AND([Type] == "Customer", [Amount] >= 5000), "VIP", "Standard")',
+      };
+
+      function analyzeTokens() {
+        const results = document.getElementById("token-analysis");
+        let html = '<div class="ui list">';
+
+        Object.entries(testFormulas).forEach(([key, formula]) => {
+          const tokens = tokenizeFormula(formula);
+          const classified = classifyTokens(tokens);
+
+          const operators = classified.filter((t) => t.type === "operator");
+          const status =
+            operators.length > 0 ?
+              '<span class="ui green label">WORKING</span>'
+            : '<span class="ui red label">BROKEN</span>';
+
+          html += `
+            <div class="item">
+              <div class="content">
+                <div class="header">${key.toUpperCase()}: ${formula}</div>
+                <div class="description">
+                  <strong>Operators found:</strong> ${operators.length}
+                  <br>
+                  <strong>Operator values:</strong> ${operators.map((t) => t.value).join(", ")}
+                  <br>
+                  <strong>Status:</strong> ${status}
+                </div>
+              </div>
+            </div>
+          `;
+        });
+
+        html += "</div>";
+        results.innerHTML = html;
+      }
+
+      function initializeVisualTests() {
+        // Comparison operators
+        document.getElementById("comparison-tests").innerHTML =
+          createFormulaCodeBlock(
+            testFormulas.gte + "\n" + testFormulas.lte + "\n" + testFormulas.ne,
+            {
+              prettify: true,
+              showCopyButton: true,
+              showLineNumbers: true,
+            }
+          );
+
+        // Logical operators
+        document.getElementById("logical-tests").innerHTML =
+          createFormulaCodeBlock(testFormulas.and + "\n" + testFormulas.or, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        // Equals operator
+        document.getElementById("equals-tests").innerHTML =
+          createFormulaCodeBlock(
+            testFormulas.equals + "\n" + testFormulas.equals2,
+            {
+              prettify: true,
+              showCopyButton: true,
+              showLineNumbers: true,
+            }
+          );
+
+        // Mixed operators
+        document.getElementById("mixed-tests").innerHTML =
+          createFormulaCodeBlock(
+            testFormulas.mixed + "\n" + testFormulas.complex,
+            {
+              prettify: true,
+              showCopyButton: true,
+              showLineNumbers: true,
+            }
+          );
+      }
+
+      function showTokenizationDebug() {
+        const tokens = tokenizeFormula(testFormulas.equals);
+        const classifiedTokens = classifyTokens(tokens);
+
+        const debugHtml = `
+          <div class="ui info message">
+            <div class="header">Tokenization Results for Equals Operator</div>
+            <pre style="background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto;">
+${classifiedTokens.map((t) => `${t.type}: "${t.value}"`).join("\n")}
+            </pre>
+          </div>
+        `;
+
+        document.getElementById("tokenization-debug").innerHTML = debugHtml;
+      }
+
+      function showOperatorList() {
+        const operatorListHtml = OPERATORS.map(
+          (op) => `<span class="ui label">${op}</span>`
+        ).join(" ");
+
+        document.getElementById("operator-list").innerHTML = operatorListHtml;
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        analyzeTokens();
+        initializeVisualTests();
+        showTokenizationDebug();
+        showOperatorList();
+        initializeFormulaCopyButtons();
+      });
+    </script>
+  </body>
+</html>

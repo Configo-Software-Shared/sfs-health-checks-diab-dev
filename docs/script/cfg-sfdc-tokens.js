@@ -31,30 +31,7 @@ const TOKEN_TYPES = {
  */
 const SF_KEYWORDS = {
   // Logical functions
-  logical: [
-    "AND",
-    "OR",
-    "NOT",
-    "IF",
-    "CASE",
-    "SWITCH",
-    "ISNULL",
-    "ISBLANK",
-    "ISNUMBER",
-    "ISTEXT",
-    "ISCHANGED",
-    "PRIORVALUE",
-    "XOR",
-    "NAND",
-    "NOR",
-    "ISNULL",
-    "ISBLANK",
-    "ISNUMBER",
-    "ISTEXT",
-    "ISDATE",
-    "ISCHANGED",
-    "PRIORVALUE",
-  ],
+  logical: ["AND", "OR", "NOT", "IF", "CASE", "SWITCH", "XOR", "NAND", "NOR"],
 
   // Text functions
   text: [
@@ -175,6 +152,8 @@ const SF_KEYWORDS = {
     "ISDATE",
     "ISCHANGED",
     "PRIORVALUE",
+    "ISNEW",
+    "ISPICKVAL",
   ],
 
   // Advanced functions
@@ -209,6 +188,7 @@ const OPERATORS = [
   "<=",
   ">=",
   "<>",
+  "==",
   "&&",
   "||",
   "=",
@@ -239,6 +219,7 @@ function prettifySalesforceFormula(formula) {
     { pattern: /<=/g, replacement: "___LESS_EQUAL___" },
     { pattern: />=/g, replacement: "___GREATER_EQUAL___" },
     { pattern: /<>/g, replacement: "___NOT_EQUAL___" },
+    { pattern: /==/g, replacement: "___EQUAL_EQUAL___" },
     { pattern: /&&/g, replacement: "___AND___" },
     { pattern: /\|\|/g, replacement: "___OR___" },
   ];
@@ -249,38 +230,40 @@ function prettifySalesforceFormula(formula) {
   });
 
   // Step 2: Process single-character operators
-  // First, add spaces around all single-character operators
+  // First, add spaces around all single-character operators (but preserve newlines)
   result = result
-    .replace(/\s*=\s*/g, " = ")
-    .replace(/\s*>\s*/g, " > ")
-    .replace(/\s*<\s*/g, " < ")
-    .replace(/\s*\+\s*/g, " + ")
-    .replace(/\s*-\s*/g, " - ")
-    .replace(/\s*\*\s*/g, " * ")
-    .replace(/\s*\/\s*/g, " / ");
+    .replace(/[ \t]*=[ \t]*/g, " = ")
+    .replace(/[ \t]*>[ \t]*/g, " > ")
+    .replace(/[ \t]*<[ \t]*/g, " < ")
+    .replace(/[ \t]*\+[ \t]*/g, " + ")
+    .replace(/[ \t]*-[ \t]*/g, " - ")
+    .replace(/[ \t]*\*[ \t]*/g, " * ")
+    .replace(/[ \t]*\/[ \t]*/g, " / ");
 
-  // Step 3: Process parentheses and commas
-  result = result.replace(/\s*([(),])\s*/g, "$1 ");
+  // Step 3: Process parentheses and commas (but preserve newlines)
+  result = result.replace(/[ \t]*([(),])[ \t]*/g, "$1 ");
 
-  // Step 4: Normalize whitespace
-  result = result.replace(/\s+/g, " ");
+  // Step 4: Normalize whitespace while preserving line breaks
+  result = result.replace(/[ \t]+/g, " "); // Only normalize spaces and tabs, not newlines
 
   // Step 5: Restore multi-character operators and fix any that got split
   result = result
     .replace(/___LESS_EQUAL___/g, " <= ")
     .replace(/___GREATER_EQUAL___/g, " >= ")
     .replace(/___NOT_EQUAL___/g, " <> ")
+    .replace(/___EQUAL_EQUAL___/g, " == ")
     .replace(/___AND___/g, " && ")
     .replace(/___OR___/g, " || ")
     // Fix any multi-character operators that got split during single-char processing
-    .replace(/>\s*=/g, " >= ")
-    .replace(/<\s*=/g, " <= ")
-    .replace(/<\s*>/g, " <> ")
-    .replace(/&\s*&/g, " && ")
-    .replace(/\|\s*\|/g, " || ");
+    .replace(/>[ \t]*=/g, " >= ")
+    .replace(/<[ \t]*=/g, " <= ")
+    .replace(/<[ \t]*>/g, " <> ")
+    .replace(/=[ \t]*=/g, " == ")
+    .replace(/&[ \t]*&/g, " && ")
+    .replace(/\|[ \t]*\|/g, " || ");
 
-  // Step 6: Final whitespace normalization
-  result = result.replace(/\s+/g, " ").trim();
+  // Step 6: Final whitespace normalization (preserving line breaks)
+  result = result.replace(/[ \t]+/g, " ").trim();
 
   // Capitalize function names
   const allFunctions = [
@@ -302,11 +285,11 @@ function prettifySalesforceFormula(formula) {
     result = result.replace(regex, constant.toUpperCase());
   });
 
-  // Add proper spacing around parentheses
+  // Add proper spacing around parentheses (but preserve newlines)
   result = result
-    .replace(/\s*\(\s*/g, " (")
-    .replace(/\s*\)\s*/g, ") ")
-    .replace(/\s+/g, " ")
+    .replace(/[ \t]*\([ \t]*/g, " (")
+    .replace(/[ \t]*\)[ \t]*/g, ") ")
+    .replace(/[ \t]+/g, " ") // Only normalize spaces and tabs, not newlines
     .trim();
 
   return result;

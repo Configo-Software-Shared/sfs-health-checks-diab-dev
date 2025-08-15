@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Validation Test - ISNEW and ISPICKVAL Functions</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="check circle icon"></i>
+        <div class="content">
+          Validation Test
+          <div class="sub header">Testing ISNEW and ISPICKVAL Functions</div>
+        </div>
+      </h1>
+
+      <div class="ui info message">
+        <div class="header">Test Purpose</div>
+        <p>
+          This page tests that ISNEW and ISPICKVAL functions are properly
+          recognized as valid Salesforce functions and not marked as errors.
+        </p>
+      </div>
+
+      <!-- Test Formulas -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="code icon"></i>
+          Test Formulas
+        </h3>
+        <p>These formulas should display without red strikethrough errors:</p>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Formula 1 (from screenshot):</h4>
+            <div id="formula1"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Formula 2 (from screenshot):</h4>
+            <div id="formula2"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Additional ISNEW Tests:</h4>
+            <div id="isnew-tests"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Additional ISPICKVAL Tests:</h4>
+            <div id="ispickval-tests"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Function List -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="list icon"></i>
+          Recognized Functions
+        </h3>
+        <p>Functions that should be recognized as valid:</p>
+        <div id="function-list"></div>
+      </div>
+    </div>
+
+    <script>
+      // Test formulas from the screenshot
+      const testFormulas = {
+        formula1:
+          "AND (NOT (ISNEW () ), ISCHANGED (Status) , $Profile.Name = \"MAX Solar Resource\", ISPICKVAL (Status, 'Canceled'))",
+        formula2:
+          'AND ($Setup. FSL__Service_Creation_Validation_Rules__c.FSL__Service_Creation_Status_Validation__c, AND (ISNEW(), (OR (ISPICKVAL (StatusCategory, "Scheduled") , ISPICKVAL (StatusCategory, "Dispatched"))) ))',
+        isnewTest1: 'IF(ISNEW(), "New Record", "Existing Record")',
+        isnewTest2: 'AND(ISNEW(), [Status] = "Draft")',
+        ispickvalTest1: 'ISPICKVAL([Status], "Active")',
+        ispickvalTest2:
+          'IF(ISPICKVAL([Type], "Customer"), "Customer", "Other")',
+      };
+
+      function initializeTests() {
+        // Test the formulas from the screenshot
+        document.getElementById("formula1").innerHTML = createFormulaCodeBlock(
+          testFormulas.formula1,
+          {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          }
+        );
+
+        document.getElementById("formula2").innerHTML = createFormulaCodeBlock(
+          testFormulas.formula2,
+          {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          }
+        );
+
+        // Test additional ISNEW examples
+        document.getElementById("isnew-tests").innerHTML =
+          createFormulaCodeBlock(
+            testFormulas.isnewTest1 + "\n" + testFormulas.isnewTest2,
+            {
+              prettify: true,
+              showCopyButton: true,
+              showLineNumbers: true,
+            }
+          );
+
+        // Test additional ISPICKVAL examples
+        document.getElementById("ispickval-tests").innerHTML =
+          createFormulaCodeBlock(
+            testFormulas.ispickvalTest1 + "\n" + testFormulas.ispickvalTest2,
+            {
+              prettify: true,
+              showCopyButton: true,
+              showLineNumbers: true,
+            }
+          );
+
+        // Display recognized functions
+        const allFunctions = [
+          ...SF_KEYWORDS.logical,
+          ...SF_KEYWORDS.text,
+          ...SF_KEYWORDS.math,
+          ...SF_KEYWORDS.datetime,
+          ...SF_KEYWORDS.conversion,
+          ...SF_KEYWORDS.advanced,
+        ];
+
+        const functionListHtml = allFunctions
+          .sort()
+          .map((func) => `<span class="ui label">${func}</span>`)
+          .join(" ");
+
+        document.getElementById("function-list").innerHTML = functionListHtml;
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeTests();
+        initializeFormulaCopyButtons();
+      });
+    </script>
+  </body>
+</html>

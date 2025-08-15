@@ -1,115 +1,194 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
-
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Salesforce Formula Syntax Highlighting - Test Pages Index</title>
     <link
       rel="stylesheet"
-      type="text/css"
-      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
     />
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
-    />
-
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
-    >
-      //
-    </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"
-    >
-      //
-    </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"
-    >
-      //
-    </script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"
-    >
-      //
-    </script>
-    <script
-      src="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"
-    >
-      //
-    </script>
-
-    <script type="text/javascript" src="script/cfg-tables.js"></script>
-    <script type="text/javascript" src="xomIndex.js"></script>
-    <title>Salesforce Formulas Test Pages</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
   </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="code icon"></i>
+        <div class="content">
+          Salesforce Formula Syntax Highlighting
+          <div class="sub header">Test Pages Index</div>
+        </div>
+      </h1>
 
-  <body style="padding: 16px">
-    <h1 class="ui header">Salesforce Formulas Test Pages</h1>
+      <div class="ui info message">
+        <div class="header">About This Project</div>
+        <p>
+          This project provides syntax highlighting and prettification for
+          Salesforce formulas. The implementation uses a tokenizer-based
+          approach for robust parsing and highlighting.
+        </p>
+      </div>
 
-    <div class="ui relaxed divided list">
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-tokenizer-test.html"
-            >Tokenizer Test</a
-          >
-          <div class="description">Interactive tokenization testing.</div>
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="list icon"></i>
+          Test Pages
+        </h3>
+
+        <div class="ui relaxed divided list">
+          <div class="item">
+            <i class="large github middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-tokenizer-test.html"
+                >Tokenizer Test</a
+              >
+              <div class="description">
+                Visualize the tokenization and classification process for
+                Salesforce formulas. Shows how formulas are broken down into
+                tokens and classified by type.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large table middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-datatable-demo.html"
+                >DataTable Demo</a
+              >
+              <div class="description">
+                Demonstrates integration with DataTables for displaying formulas
+                in table cells with syntax highlighting and copy functionality.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large paint brush middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-phase2-features-test.html"
+                >Phase 2 Features Test</a
+              >
+              <div class="description">
+                Tests advanced features including nested field references,
+                custom functions, formula field references, and error
+                highlighting.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large eye middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-phase3-features-test.html"
+                >Phase 3 Features Test</a
+              >
+              <div class="description">
+                Tests visual enhancements including theme support (Light, Dark,
+                Solarized, Monokai), line numbers, and collapsible sections.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large calculator middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-operator-test.html"
+                >Operator Test</a
+              >
+              <div class="description">
+                Tests that multi-character operators (&lt;=, >=, &lt;>, ==, &&,
+                ||) are properly recognized as single operators and not split
+                into separate characters.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large bug middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-debug-tokenization.html"
+                >Debug Tokenization</a
+              >
+              <div class="description">
+                Debugging tool to step through the tokenization process and see
+                how formulas are parsed into individual tokens.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large magic middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-prettify-test.html"
+                >Prettify Test</a
+              >
+              <div class="description">
+                Tests the prettification process step by step, showing how
+                formulas are formatted for better readability.
+              </div>
+            </div>
+          </div>
+
+          <div class="item">
+            <i class="large check circle middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="cfg-sfdc-validation-test.html"
+                >Validation Test</a
+              >
+              <div class="description">
+                Tests that ISNEW and ISPICKVAL functions are properly recognized
+                as valid Salesforce functions and not marked as errors.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-datatable-demo.html"
-            >DataTable Demo</a
-          >
-          <div class="description">DataTable integration examples.</div>
+
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="book icon"></i>
+          Documentation
+        </h3>
+
+        <div class="ui relaxed divided list">
+          <div class="item">
+            <i class="large file text middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="README-cfg-sfdc-tokens.md"
+                >README - Formula Syntax</a
+              >
+              <div class="description">
+                Comprehensive documentation covering the API, usage examples,
+                supported functions, and technical architecture of the
+                Salesforce formula syntax highlighting system.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-phase2-features-test.html"
-            >Phase 2 Features Test</a
-          >
-          <div class="description">Phase 2 advanced features testing.</div>
-        </div>
-      </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-phase3-features-test.html"
-            >Phase 3 Features Test</a
-          >
-          <div class="description">Phase 3 visual enhancements testing.</div>
-        </div>
-      </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-operator-fix-verification.html"
-            >Operator Fix Verification</a
-          >
-          <div class="description">Multi-character operator verification.</div>
-        </div>
-      </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-debug-tokenization.html"
-            >Debug Tokenization</a
-          >
-          <div class="description">Tokenization debugging and analysis.</div>
-        </div>
-      </div>
-      <div class="item">
-        <i class="large tasks middle aligned icon"></i>
-        <div class="content">
-          <a class="header" href="cfg-sfdc-prettify-test.html">Prettify Test</a>
-          <div class="description">Prettification process debugging.</div>
+
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="cogs icon"></i>
+          Core Files
+        </h3>
+
+        <div class="ui relaxed divided list">
+          <div class="item">
+            <i class="large file code middle aligned icon"></i>
+            <div class="content">
+              <a class="header" href="script/cfg-sfdc-tokens.js"
+                >cfg-sfdc-tokens.js</a
+              >
+              <div class="description">
+                Main implementation file containing the tokenizer, syntax
+                highlighter, prettification, and theme system for Salesforce
+                formulas.
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

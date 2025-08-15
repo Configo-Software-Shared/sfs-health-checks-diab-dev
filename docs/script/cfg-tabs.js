@@ -160,17 +160,95 @@ function createTabbedDetailsManager(config) {
         cleanupContent(getTabId(identifier));
       }
 
+      // If the closed tab was active, find the adjacent tab BEFORE removing elements
+      let tabToActivate = null;
+      if (tabElement.classList.contains("active")) {
+        // Get all tabs BEFORE removal to find the position of the closed tab
+        const allTabs = Array.from(
+          document.querySelectorAll(`#${menuId} .item`)
+        );
+        const closedTabIndex = allTabs.findIndex(
+          (tab) => tab.getAttribute("data-tab") === identifier
+        );
+
+        if (closedTabIndex !== -1) {
+          // Try to find a tab to the right first
+          for (let i = closedTabIndex + 1; i < allTabs.length; i++) {
+            const tab = allTabs[i];
+            if (
+              tab.getAttribute("data-tab") &&
+              tab.getAttribute("data-tab") !== identifier
+            ) {
+              tabToActivate = tab;
+              break;
+            }
+          }
+
+          // If no tab to the right, try to find a tab to the left
+          if (!tabToActivate) {
+            for (let i = closedTabIndex - 1; i >= 0; i--) {
+              const tab = allTabs[i];
+              if (
+                tab.getAttribute("data-tab") &&
+                tab.getAttribute("data-tab") !== identifier
+              ) {
+                tabToActivate = tab;
+                break;
+              }
+            }
+          }
+        }
+
+        // If still no tab found, fall back to the first available tab (excluding the one being closed)
+        if (!tabToActivate) {
+          for (let i = 0; i < allTabs.length; i++) {
+            const tab = allTabs[i];
+            if (
+              tab.getAttribute("data-tab") &&
+              tab.getAttribute("data-tab") !== identifier
+            ) {
+              tabToActivate = tab;
+              break;
+            }
+          }
+        }
+      }
+
       // Remove tab and content
       tabElement.remove();
       tabContent.remove();
 
-      // If the closed tab was active, switch to the first tab
-      if (tabElement.classList.contains("active")) {
-        document.getElementById(currentMenuItemId).click();
-      }
+      // Activate the selected tab if the closed tab was active
+      if (tabToActivate) {
+        // Get the identifier of the tab to activate
+        const tabIdentifier = tabToActivate.getAttribute("data-tab");
 
-      // Reinitialize tabs
-      $(".menu .item").tab();
+        // Reinitialize tabs without onVisible callback to avoid the error
+        $(".menu .item").tab();
+
+        // Activate the tab
+        tabToActivate.click();
+
+        // Manually initialize content if needed and if it's not the default tab
+        if (tabIdentifier && initializeContent) {
+          const data = findData(tabIdentifier);
+          if (data) {
+            // Use setTimeout to ensure the tab is fully activated
+            setTimeout(() => {
+              initializeContent(getTabId(tabIdentifier), data);
+            }, 50);
+          }
+        }
+      } else if (tabElement.classList.contains("active")) {
+        // No other tabs found, switch to default tab
+        $(".menu .item").tab();
+        setTimeout(() => {
+          document.getElementById(currentMenuItemId).click();
+        }, 0);
+      } else {
+        // Reinitialize tabs
+        $(".menu .item").tab();
+      }
     }
   }
 
