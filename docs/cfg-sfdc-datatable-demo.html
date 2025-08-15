@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>DataTable Formula Integration Demo</title>
+
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jq-3.7.0/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+
+  <body style="padding: 16px">
+    <h1 class="ui header">DataTable Formula Integration Demo</h1>
+
+    <div class="ui segment">
+      <h3>Sample Validation Rules with Formula Highlighting</h3>
+      <table id="validationRulesTable" class="ui celled table">
+        <thead>
+          <tr>
+            <th>Rule Name</th>
+            <th>Object</th>
+            <th>Error Message</th>
+            <th>Formula</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Account Status Required</td>
+            <td>Account</td>
+            <td>Account status is required for active accounts</td>
+            <td>IF([Type] = "Customer", ISBLANK([Status]), FALSE)</td>
+          </tr>
+          <tr>
+            <td>Contact Email Format</td>
+            <td>Contact</td>
+            <td>Email must contain @ symbol</td>
+            <td>AND(NOT(ISBLANK([Email])), NOT(CONTAINS([Email], "@")))</td>
+          </tr>
+          <tr>
+            <td>Opportunity Amount</td>
+            <td>Opportunity</td>
+            <td>Amount must be greater than 0 for closed won opportunities</td>
+            <td>AND([StageName] = "Closed Won", [Amount] <= 0)</td>
+          </tr>
+          <tr>
+            <td>Case Priority</td>
+            <td>Case</td>
+            <td>High priority cases must have a subject</td>
+            <td>AND([Priority] = "High", ISBLANK([Subject]))</td>
+          </tr>
+          <tr>
+            <td>Lead Source</td>
+            <td>Lead</td>
+            <td>Lead source is required</td>
+            <td>ISBLANK([LeadSource])</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="ui segment">
+      <h3>Usage Examples</h3>
+      <div class="ui info message">
+        <div class="header">How to integrate with DataTables:</div>
+        <pre><code>// Basic usage
+const table = initDataTable('#myTable', true, {
+  columns: [
+    { data: 'name', title: 'Name' },
+    {
+      data: 'formula',
+      title: 'Formula',
+      render: renderSalesforceFormula(true, false)
+    }
+  ]
+});
+
+// With copy buttons
+const table = initDataTable('#myTable', true, {
+  columns: [
+    { data: 'name', title: 'Name' },
+    {
+      data: 'formula',
+      title: 'Formula',
+      render: renderSalesforceFormula(true, true)
+    }
+  ]
+});
+
+// Without prettification
+const table = initDataTable('#myTable', true, {
+  columns: [
+    { data: 'name', title: 'Name' },
+    {
+      data: 'formula',
+      title: 'Formula',
+      render: renderSalesforceFormula(false, false)
+    }
+  ]
+});</code></pre>
+      </div>
+    </div>
+
+    <script>
+      // Initialize the DataTable with formula highlighting
+      const table = initDataTable("#validationRulesTable", true, {
+        columns: [
+          { data: 0, title: "Rule Name" },
+          { data: 1, title: "Object" },
+          { data: 2, title: "Error Message" },
+          {
+            data: 3,
+            title: "Formula",
+            render: renderSalesforceFormula(true, true),
+          },
+        ],
+        layout: {
+          top1Start: {
+            buttons: [
+              { extend: "copy", title: "Validation Rules" },
+              { extend: "csvHtml5", title: "Validation Rules" },
+              { extend: "excelHtml5", title: "Validation Rules" },
+              { extend: "pdfHtml5", title: "Validation Rules" },
+              "print",
+            ],
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

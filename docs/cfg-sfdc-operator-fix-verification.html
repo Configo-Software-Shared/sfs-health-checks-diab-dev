@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operator Fix Verification</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="check circle icon"></i>
+        <div class="content">
+          Operator Fix Verification
+          <div class="sub header">Testing the operator tokenization fix</div>
+        </div>
+      </h1>
+
+      <div class="ui success message">
+        <div class="header">Fix Applied</div>
+        <p>
+          Moved operator handling to the top of the tokenization function,
+          before field references and other character handling.
+        </p>
+      </div>
+
+      <!-- Test Results -->
+      <div class="ui segment">
+        <h3 class="ui header">Token Analysis</h3>
+        <div id="token-analysis"></div>
+      </div>
+
+      <!-- Visual Test -->
+      <div class="ui segment">
+        <h3 class="ui header">Visual Test</h3>
+        <p>These should now show operators as single highlighted units:</p>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Greater Than or Equal:</h4>
+            <div id="gte-test"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Logical AND:</h4>
+            <div id="and-test"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Less Than or Equal:</h4>
+            <div id="lte-test"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Logical OR:</h4>
+            <div id="or-test"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Test formulas
+      const testFormulas = {
+        gte: "[Amount] >= 1000",
+        lte: "[CloseDate] <= TODAY()",
+        and: '[Type] = "Customer" && [Amount] > 5000',
+        or: '[Priority] = "High" || [Amount] >= 10000',
+      };
+
+      function analyzeTokens() {
+        const results = document.getElementById("token-analysis");
+        let html = '<div class="ui list">';
+
+        Object.entries(testFormulas).forEach(([key, formula]) => {
+          const tokens = tokenizeFormula(formula);
+          const classified = classifyTokens(tokens);
+
+          const operators = classified.filter((t) => t.type === "operator");
+          const status =
+            operators.length > 0 ?
+              '<span class="ui green label">FIXED</span>'
+            : '<span class="ui red label">STILL BROKEN</span>';
+
+          html += `
+                    <div class="item">
+                        <div class="content">
+                            <div class="header">${key.toUpperCase()}: ${formula}</div>
+                            <div class="description">
+                                <strong>Operators found:</strong> ${operators.length}
+                                <br>
+                                <strong>Operator values:</strong> ${operators.map((t) => t.value).join(", ")}
+                                <br>
+                                <strong>Status:</strong> ${status}
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+
+        html += "</div>";
+        results.innerHTML = html;
+      }
+
+      function initializeVisualTests() {
+        document.getElementById("gte-test").innerHTML = createFormulaCodeBlock(
+          testFormulas.gte,
+          {
+            prettify: true,
+            showCopyButton: true,
+          }
+        );
+
+        document.getElementById("lte-test").innerHTML = createFormulaCodeBlock(
+          testFormulas.lte,
+          {
+            prettify: true,
+            showCopyButton: true,
+          }
+        );
+
+        document.getElementById("and-test").innerHTML = createFormulaCodeBlock(
+          testFormulas.and,
+          {
+            prettify: true,
+            showCopyButton: true,
+          }
+        );
+
+        document.getElementById("or-test").innerHTML = createFormulaCodeBlock(
+          testFormulas.or,
+          {
+            prettify: true,
+            showCopyButton: true,
+          }
+        );
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        analyzeTokens();
+        initializeVisualTests();
+        initializeFormulaCopyButtons();
+      });
+    </script>
+  </body>
+</html>

@@ -1,20 +1,33 @@
-<html lang="en" style="padding: 20px" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<html
+  lang="en"
+  style="padding: 20px"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width" />
     <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
-    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css" />
-    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js">//</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js">//</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js">//</script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js">//</script>
-    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js">//</script>
-    <script type="text/javascript" src="script/cfg-tables.js">//</script>
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="50.ServiceTerritories.js"></script>
     <title>Service Territories</title>
   </head>
   <body>
-    <h1>Service Territory Summary</h1>
+    <h2 class="ui header">Service Territory Summary</h2>
     <table id="territories-summary" class="ui responsive celled table">
       <thead>
         <tr class="header">
@@ -28,7 +41,8 @@
         </tr>
       </thead>
     </table>
-    <h1>Service Territory Memberships</h1>
+
+    <h2>Service Territory Memberships</h2>
     <table id="territory-memberships" class="ui responsive celled table">
       <thead>
         <tr class="header">
@@ -38,153 +52,208 @@
         </tr>
       </thead>
     </table>
+    <p>
+      The territories are expressed as ref/unresolved ID immediately followed by
+      end date (day only) in parentheses for filtering purposes. For example:
+    </p>
+    <code>ServiceTerritory[Northern California](2024-05-14)</code>
+    <p>
+      That means that the following patterns can be used for filtering territory
+      assignment columns:
+    </p>
+    <div class="ui bulleted list">
+      <div class="item">
+        <code>()</code>: all resources where at least one territory assignment
+        is current (i.e. without an end date).
+      </div>
+      <div class="item">
+        <code>/\(.+\)</code>: all resources where at least one territory
+        assignment is expired.
+      </div>
+      <div class="item">
+        <code>[Northern California]()</code>: all resources with a current valid
+        assignment to Northern California.
+      </div>
+      <div class="item">
+        <code>\[Northern California\]\(.+\)</code>: all resources with expired
+        assignments to Northern California.
+      </div>
+    </div>
+
     <script>
-  const summaryData = [
-{ "name": "Acme Partners Territory", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability San Francisco]", "value": "Field Availability San Francisco" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "London Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[London Contact Center Workforce]", "value": "London Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Los Angeles", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability Los Angeles]", "value": "Field Availability Los Angeles" }, "primaryMemberCount": 13, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Oakland Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 1, "secondaryOperatingHours": [ ] },
-{ "name": "Palo Alto Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[California Centers Operating Hours]", "value": "California Centers Operating Hours" }, "primaryMemberCount": 3, "primaryOperatingHours": [ ], "secondaryMemberCount": 1, "secondaryOperatingHours": [ ] },
-{ "name": "Repair Depot", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Base Calendar]", "value": "Base Calendar" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "San Francisco Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Contact Center Workforce]", "value": "San Francisco Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "San Francisco Training Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[San Francisco Operating Hours]", "value": "San Francisco Operating Hours" }, "primaryMemberCount": 6, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "San Francisco", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Field Availability San Francisco]", "value": "Field Availability San Francisco" }, "primaryMemberCount": 10, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Tokyo Contact Center", "parents": [ ], "operatingHours": { "ref": "OperatingHours[Tokyo Contact Center Workforce]", "value": "Tokyo Contact Center Workforce" }, "primaryMemberCount": 0, "primaryOperatingHours": null, "secondaryMemberCount": 0, "secondaryOperatingHours": null },
-{ "name": "Virtual Trainers", "parents": [ ], "operatingHours": { "unresolved": "OperatingHours[Id=0OHKc000000gPEYOA2]", "value": "0OHKc000000gPEYOA2" }, "primaryMemberCount": 4, "primaryOperatingHours": [ ], "secondaryMemberCount": 0, "secondaryOperatingHours": null }
-];
+      /**
+       * Renders a member count as a clickable link that, when clicked,
+       * clears all filters in #territory-memberships, sets the filter for the
+       * appropriate column to the given territory name, and focuses the table.
+       * @param {string} tableId - Table selector.
+       * @param {number} columnIndex - The index of the column to filter on.
+       * @returns {function} - DataTables render function.
+       */
+      function renderMemberCount(tableId, columnIndex) {
+        return function (data, type, row, meta) {
+          if (type !== "display" || !row || !row.name || data === 0)
+            return data;
 
-  const membershipData = [
-{ "name": "Acme Partners (acme.dispatcher@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Admin User (admin@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Alan Reed (areed@ul.agent)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Alexander Raneri (alexanderraneri.x5hciw4wfubt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Andre Mcgee (andre.mcgee@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": null },
-{ "name": "Andy James (andyjames.myfzbvkap6rn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Anita Gonzalez (anita.gonzalez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ] },
-{ "name": "Asset Testing as Resource (swalizarif@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Asset Testing ()", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Carrie Olson (carrie.olson@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ] },
-{ "name": "Connie Ruiz (connieruiz.xohnr4610gtt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
-{ "name": "Deanna Marsh (deanna.marsh@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
-{ "name": "Electrical Team ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Gloria Barnes (gloriabarnes.lqi5wed8cjjn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Harry Long (harrylong.honlycxr8vkt@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Installation Team A ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Installation Team B ()", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "James Clifton (jamesclifton.rhde32xuvlyn@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "James Harrington (james.harrington@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
-{ "name": "Jane Austin (janeaustin.wzxsmseq0oba@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Janet Jones (janetjones.hh0wi2bw56qb@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Janet Martinez (janet.martinez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
-{ "name": "Janice Gonzales (janicegonzales.ga6rvptui1hz@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Jim Matthews (jimmatthews.bo2xe5zdjzui@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Keith Dorsey (keith.dorsey@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
-{ "name": "Lamar Smith (lamarsmith.fco3m0zjkyva@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Lisa Hartman (lisa.hartman@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null },
-{ "name": "Louise Martin (louisemartin.07q1x3xfldgy@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Mark Mayo (mark.mayo@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
-{ "name": "Martino Castanon (martinocastanon.n5vtq1k6i3du@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Mary Adams (maryadams.sngxpoqzkw2a@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Matthew Parker (matthewparker.ttxm9cwy2fgz@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Melissa Wood (melissawood.dhtrsp2deayh@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Pam Lawison (pamlawison.ja4hw0pl7xei@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Paul Morrison (paulmorrison.ocddetq6acbd@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Los Angeles]", "value": "Los Angeles" } ], "secondaryTerritories": null },
-{ "name": "Paula Wright (paula.wright@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Palo Alto Training Center]", "value": "Palo Alto Training Center" } ], "secondaryTerritories": null },
-{ "name": "Prakash Das (prakash.das@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Oakland Training Center]", "value": "Oakland Training Center" } ], "secondaryTerritories": null },
-{ "name": "Ralph Clark (ralphclark.qgk9oneazgqo@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Russell Perez (russell.perez@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
-{ "name": "Safety Simulator 1kW ()", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
-{ "name": "Silver Partners (sean.silver@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Tim Service (tim.service@ul.agent.com)", "primaryTerritories": null, "secondaryTerritories": null },
-{ "name": "Tina Le (tina.le@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco Training Center]", "value": "San Francisco Training Center" } ], "secondaryTerritories": null },
-{ "name": "Vivek Rathod (vrathod@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[San Francisco]", "value": "San Francisco" } ], "secondaryTerritories": null },
-{ "name": "Xavier Acme (xavieracme.fzaoycaepxbm@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
-{ "name": "Yvette Acme (yvette.acme@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
-{ "name": "Zach Acme (zach.acme@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Acme Partners Territory]", "value": "Acme Partners Territory" } ], "secondaryTerritories": null },
-{ "name": "Zachary Garcia (zachary.garcia@ul.agent.com)", "primaryTerritories": [ { "ref": "ServiceTerritory[Virtual Trainers]", "value": "Virtual Trainers" } ], "secondaryTerritories": null }
-];
+          // row.name is the territory name
+          const territoryName = row.name;
 
-  /**
-    * Renders a member count as a clickable link that, when clicked,
-    * clears all filters in #territory-memberships, sets the filter for the
-    * appropriate column to the given territory name, and focuses the table.
-    * @param {string} tableId - Table selector.
-    * @param {number} columnIndex - The index of the column to filter on.
-    * @returns {function} - DataTables render function.
-    */
-  function renderMemberCount(tableId, columnIndex) {
-    return function (data, type, row, meta) {
-      if (type !== 'display' || !row || !row.name || data === 0) return data;
+          // Escape for HTML
+          const safeName = String(territoryName).replace(/"/g, "&quot;");
 
-      // row.name is the territory name
-      const territoryName = row.name;
+          return `<a href="#" onclick="
+            clearAllFilters('${tableId}');
+            setColumnFilter('${tableId}', ${columnIndex}, '[${safeName}]');
+            scrollTableIntoView('${tableId}');
+            return false;
+          ">${data}</a>`;
+        };
+      }
 
-      // Escape for HTML
-      const safeName = String(territoryName).replace(/"/g, '&quot;');
+      function renderTerritoryAssignment(data, type) {
+        if (type === "display") {
+          if (data && typeof data === "object") {
+            if (data.ref && data.endDate === undefined) {
+              return `<div class="ui green label">${data.value}` + "</div>";
+            } else if (data.ref) {
+              return `<div class="ui basic green label">${data.value}<div class="detail">${data.endDate.substring(0, 10)}</div></div>`;
+            } else if (data.unresolved && data.endDate === undefined) {
+              return `<div class="ui red label">${data.unresolved}</div>`;
+            } else if (data.unresolved) {
+              return `<div class="ui basic red label">${data.unresolved}<div class="detail">${data.endDate.substring(0, 10)}</div></div>`;
+            } else if (data.value) {
+              return `<div class="ui grey label">${data.value}</div>`;
+            } else {
+              return `<div class="ui label">&lt;empty></div>`;
+            }
+          }
+        } else {
+          return (
+            (data.ref ?? data.unresolved ?? data.value) +
+            `(${data.endDate?.substring(0, 10) ?? ""})`
+          );
+        }
+      }
 
-      return `<a href="#" onclick="
-        clearAllFilters('${tableId}');
-        setColumnFilter('${tableId}', ${columnIndex}, '/\\\\[${safeName}\\\\]');
-        scrollTableIntoView('${tableId}');
-        return false;
-      ">${data}</a>`;
-    };
-  }
+      function renderTerritoryAssignments(
+        includeType,
+        topClasses,
+        wrapRef,
+        divider
+      ) {
+        const wrapUsed =
+          wrapRef ?? ((item) => `<div class='item'>${item}</div>`);
+        const header = `<div class="ui ${topClasses ?? "list"}">`;
+        const dividerUsed = divider ?? "";
+        return function (data, type) {
+          if (Array.isArray(data) && data.length > 0) {
+            if (type === "display") {
+              return (
+                header +
+                data
+                  .map((item) => renderTerritoryAssignment(item, "display"))
+                  .map(wrapUsed)
+                  .join(dividerUsed) +
+                "</div>"
+              );
+            } else {
+              return data
+                .map((item) => renderTerritoryAssignment(item, type))
+                .join("||");
+            }
+          }
+          return null;
+        };
+      }
 
-  $( document ).ready( function ()
-    {
-      initDataTableWithButtons(
-        '#territories-summary',
-        'Service Territory Summary',
-        true,
-        true,
-        {
-          data: summaryData,
-          columns: [
-            { data: 'name', title: 'Name' },
-            { data: 'parents', title: 'Parents',
-              render: renderXoomReferences(false, 'breadcrumb', (item) => item, '<span class="divider">/</span>') },
-            { data: 'operatingHours', title: 'Operating hours', render: renderXoomReference(false) },
-            { data: 'primaryMemberCount', title: 'Primary members', render: renderMemberCount('#territory-memberships', 1) },
-            { data: 'primaryOperatingHours', title: 'Primary op hours', render: renderXoomReferences(false) },
-            { data: 'secondaryMemberCount', title: 'Secondary members', render: renderMemberCount('#territory-memberships', 2) },
-            { data: 'secondaryOperatingHours', title: 'Secondary op hours', render: renderXoomReferences(false) }
-          ],
-          columnDefs: [
-            {
-              targets: [1, 2, 4, 6],
-              type: 'html',
-            },
-          ],
-          pageLength: 20,
-          lengthMenu: [20, 40, 70, 100]
-        }, true,
-      );
+      $(document).ready(function () {
+        initDataTableWithButtons(
+          "#territories-summary",
+          "Service Territory Summary",
+          true,
+          true,
+          {
+            data: summaryData,
+            columns: [
+              { data: "name", title: "Name" },
+              {
+                data: "parents",
+                title: "Parents",
+                render: renderXoomReferences(
+                  false,
+                  "breadcrumb",
+                  (item) => item,
+                  '<span class="divider">/</span>'
+                ),
+              },
+              {
+                data: "operatingHours",
+                title: "Operating hours",
+                render: renderXoomReference(false),
+              },
+              {
+                data: "primaryMemberCount",
+                title: "Primary members",
+                render: renderMemberCount("#territory-memberships", 1),
+              },
+              {
+                data: "primaryOperatingHours",
+                title: "Primary op hours",
+                render: renderXoomReferences(false),
+              },
+              {
+                data: "secondaryMemberCount",
+                title: "Secondary members",
+                render: renderMemberCount("#territory-memberships", 2),
+              },
+              {
+                data: "secondaryOperatingHours",
+                title: "Secondary op hours",
+                render: renderXoomReferences(false),
+              },
+            ],
+            columnDefs: [
+              {
+                targets: [1, 2, 4, 6],
+                type: "html",
+              },
+            ],
+            pageLength: 20,
+            lengthMenu: [20, 40, 70, 100],
+          },
+          true
+        );
 
-      initDataTableWithButtons(
-        '#territory-memberships',
-        'Service Territory Memberships',
-        true,
-        true,
-        {
-          data: membershipData,
-          columns: [
-            { data: 'name', title: 'Name' },
-            { data: 'primaryTerritories', title: 'Primary territories', render: renderXoomReferences(false) },
-            { data: 'secondaryTerritories', title: 'Secondary territories', render: renderXoomReferences(false) }
-          ],
-          columnDefs: [
-            {
-              targets: [1, 2],
-              type: 'html',
-            },
-          ],
-          pageLength: 20,
-          lengthMenu: [20, 40, 70, 100]
-        },
-      );
-
-    }
-  );</script>
+        initDataTableWithButtons(
+          "#territory-memberships",
+          "Service Territory Memberships",
+          true,
+          true,
+          {
+            data: membershipData,
+            columns: [
+              { data: "name", title: "Name" },
+              {
+                data: "primaryTerritories",
+                title: "Primary territories",
+                render: renderTerritoryAssignments(false),
+              },
+              {
+                data: "secondaryTerritories",
+                title: "Secondary territories",
+                render: renderTerritoryAssignments(false),
+              },
+            ],
+            columnDefs: [
+              {
+                targets: [1, 2],
+                type: "html",
+              },
+            ],
+            pageLength: 20,
+            lengthMenu: [20, 40, 70, 100],
+          }
+        );
+      });
+    </script>
   </body>
 </html>

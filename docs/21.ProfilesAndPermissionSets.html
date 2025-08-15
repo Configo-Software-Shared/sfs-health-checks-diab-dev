@@ -1,0 +1,480 @@
+<html lang="en" style="padding: 20px">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="script/cfg-tabs.js"></script>
+    <script type="text/javascript" src="21.Permissions.js"></script>
+    <title>Profiles and Permission Sets</title>
+    <style>
+      #masterTable tbody tr {
+        cursor: pointer;
+      }
+      #masterTable tbody tr:hover {
+        background-color: whitesmoke;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 class="ui header">Profiles and Permission Sets</h2>
+    <table id="masterTable" class="ui celled table">
+      <thead>
+        <tr class="header">
+          <th>Name</th>
+          <th>Users Assigned</th>
+          <th>Permissions Count</th>
+          <th>Objects Count</th>
+          <th>Fields Count</th>
+        </tr>
+      </thead>
+    </table>
+    <div id="details" style="margin-top: 20px">
+      <div id="tab-menu" class="ui top attached tabular menu">
+        <a id="tab-menu-current" class="active item" data-tab="tab-current">
+          <i>Current</i>
+        </a>
+      </div>
+      <div
+        id="tab-current"
+        class="ui bottom attached active tab segment"
+        data-tab="tab-current"
+      >
+        <!--Container to display the current object.-->
+      </div>
+    </div>
+    <script>
+      // Profile and Permission Set specific render functions
+      function renderName(data, type, row, meta) {
+        if (type === "display") {
+          return data.startsWith("[P] ") ?
+              `<div class="name" data-original-name="${data}"><div class="ui blue horizontal label">Profile</div>${data.substring(4)}</div>`
+            : `<div class="name" data-original-name="${data}"><div class="ui teal horizontal label">Permission Set</div>${data}</div>`;
+        } else {
+          return data.startsWith("[P] ") ? data : `[PS] data`;
+        }
+      }
+
+      // Profile and Permission Set specific content generation
+      const permissionSuffix = "permissions";
+      const objectSuffix = "objects";
+
+      function generateProfilePermissionSetDetailsHtml(tabId, data) {
+        let topSection = `
+          <h2 class='ui header'>${
+            data.name.startsWith("[P] ") ?
+              `<div class="ui blue horizontal label">Profile</div>${data.name.substring(4)}`
+            : `<div class="ui teal horizontal label">Permission Set</div>${data.name}`
+          }</h2>
+          <table class="ui very basic collapsing celled table">
+            <tbody>
+              <tr>
+                <td>Users Assigned</td>
+                <td>${data.userCount}</td>
+              </tr>
+              <tr>
+                <td>Permissions Count</td>
+                <td>${data.permissionCount}</td>
+              </tr>
+              <tr>
+                <td>Objects Count</td>
+                <td>${data.objectCount}</td>
+              </tr>
+              <tr>
+                <td>Fields Count</td>
+                <td>${data.fieldCount}</td>
+              </tr>
+            </tbody>
+          </table>`;
+
+        let usersSection = `
+          <h3 class='ui header'>User Assignments</h3>
+          <table id='${tabId}-users' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Username</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>User Type</th>
+              </tr>
+            </thead>
+          </table>`;
+
+        let permissionsSection = `
+          <h3 class='ui header'>Permissions</h3>
+          <table id='${tabId}-${permissionSuffix}' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Permission</th>
+              </tr>
+            </thead>
+          </table>`;
+
+        let objectsSection = `
+          <h3 class='ui header'>Object Permissions</h3>
+          <table id='${tabId}-${objectSuffix}' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Object/Field</th>
+                <th>Permissions</th>
+              </tr>
+            </thead>
+          </table>`;
+
+        return topSection + usersSection + permissionsSection + objectsSection;
+      }
+
+      function initializeProfilePermissionSetDataTables(tabId, data) {
+        // There are two cases: one with initialized tabId and data, and one where tabId is the identifier, and data is undefined.
+        if (data === undefined) {
+          data = findProfilePermissionSet(tabId);
+          tabId = getTabId(tabId);
+        }
+
+        $(`#${tabId}-users`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+            initDataTableWithButtons(
+              `#${this.id}`,
+              `User Assignments for ${data.name}`,
+              true,
+              true,
+              {
+                data: getUsersData(data),
+                columns: [
+                  { title: "Username" },
+                  { title: "Name" },
+                  { title: "Email" },
+                  { title: "User Type" },
+                ],
+              }
+            );
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
+          }
+        });
+
+        $(`#${tabId}-${permissionSuffix}`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+            initDataTableWithButtons(
+              `#${this.id}`,
+              `Permissions for ${data.name}`,
+              true,
+              true,
+              {
+                data: getPermissionsData(data),
+                columns: [{ title: "Permission" }],
+              }
+            );
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
+          }
+        });
+
+        $(`#${tabId}-${objectSuffix}`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+            initDataTableWithButtons(
+              `#${this.id}`,
+              `Object Permissions for ${data.name}`,
+              true,
+              true,
+              {
+                data: getObjectPermissionsData(data),
+                columns: [{ title: "Object/Field" }, { title: "Permissions" }],
+              }
+            );
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
+          }
+        });
+      }
+
+      function cleanupProfilePermissionSetDataTables(tabId) {
+        const usersTableSelector = `#${tabId}-users`;
+        const usersDataTable =
+          $.fn.DataTable.isDataTable(usersTableSelector) ?
+            $(usersTableSelector).DataTable()
+          : null;
+        if (usersDataTable) {
+          usersDataTable.destroy();
+        }
+
+        const tableSelector = `#${tabId}-${permissionSuffix}`;
+        const dataTable =
+          $.fn.DataTable.isDataTable(tableSelector) ?
+            $(tableSelector).DataTable()
+          : null;
+        if (dataTable) {
+          dataTable.destroy();
+        }
+
+        const objectsTableSelector = `#${tabId}-${objectSuffix}`;
+        const objectsDataTable =
+          $.fn.DataTable.isDataTable(objectsTableSelector) ?
+            $(objectsTableSelector).DataTable()
+          : null;
+        if (objectsDataTable) {
+          objectsDataTable.destroy();
+        }
+      }
+
+      // Create tabbed details manager for profiles and permission sets
+      const profilePermissionSetTabManager = createTabbedDetailsManager({
+        generateContent: generateProfilePermissionSetDetailsHtml,
+        initializeContent: initializeProfilePermissionSetDataTables,
+        cleanupContent: cleanupProfilePermissionSetDataTables,
+        getTabId: getTabId,
+        findData: findProfilePermissionSet,
+        notFoundMessage: 'Profile/Permission Set "{identifier}" not found.',
+      });
+
+      // Extract the functions for use in click handlers
+      const { displayDetails, addAndDisplayDetails, closeTab } =
+        profilePermissionSetTabManager;
+
+      function getUsersData(data) {
+        const assignedUsers = [];
+
+        if (data.name.startsWith("[P] ")) {
+          // This is a profile - find users with this profile
+          const profileName = data.name.substring(4);
+          usersData.forEach((user) => {
+            if (user.profile && user.profile.value === profileName) {
+              assignedUsers.push([
+                user.username,
+                user.name,
+                user.email,
+                user.userType,
+              ]);
+            }
+          });
+        } else {
+          // This is a permission set - find users with this permission set
+          usersData.forEach((user) => {
+            if (
+              user.permissionSets &&
+              user.permissionSets.some((ps) => ps.value === data.name)
+            ) {
+              assignedUsers.push([
+                user.username,
+                user.name,
+                user.email,
+                user.userType,
+              ]);
+            }
+          });
+        }
+
+        return assignedUsers;
+      }
+
+      function getPermissionsData(data) {
+        // Get the permission indices for this profile/permission set
+        const permissionIndices = permissionSetPermissions[data.name];
+
+        if (!permissionIndices) {
+          return [];
+        }
+
+        // Convert to the required format: [permission, description]
+        return permissionIndices.map((permissionIndex) => {
+          const permission = permissionsArray[permissionIndex];
+          return [permission];
+        });
+      }
+
+      function getObjectPermissionsData(data) {
+        // Get the object permissions for this profile/permission set
+        const objectPermissions = objectsPermissions[data.name];
+
+        if (!objectPermissions) {
+          return [];
+        }
+
+        // Convert to the required format: [object/field, permissions]
+        const result = [];
+
+        objectPermissions.forEach(
+          ([objectIndex, objectPermissions, fieldPermissions]) => {
+            const object = objectsArray[objectIndex];
+            if (object) {
+              const objectName = object.o;
+
+              // Add object-level permissions
+              result.push([objectName, objectPermissions]);
+
+              // Add field-level permissions
+              fieldPermissions.forEach(([fieldIndex, fieldPermissions]) => {
+                const fieldName = object.fs[fieldIndex];
+                if (fieldName) {
+                  const fieldKey = `${objectName}.${fieldName}`;
+                  result.push([fieldKey, fieldPermissions]);
+                }
+              });
+            }
+          }
+        );
+
+        return result;
+      }
+
+      function findProfilePermissionSet(name) {
+        return profilesAndPermissionSetsData.find((p) => p.name === name);
+      }
+
+      function getTabId(name) {
+        return `tab-profile-permissionset-${name.replace(/[@\.]/g, "_")}`;
+      }
+
+      // Generate the master table data
+      function generateProfilesAndPermissionSetsData() {
+        const result = [];
+
+        // Add profiles
+        Object.keys(permissionSetPermissions).forEach((profileName) => {
+          if (profileName.startsWith("[P] ")) {
+            const permissionIndices = permissionSetPermissions[profileName];
+            const objectPermissions = objectsPermissions[profileName];
+
+            // Count users assigned to this profile
+            const userCount = usersData.filter(
+              (user) =>
+                user.profile && user.profile.value === profileName.substring(4)
+            ).length;
+
+            // Count objects and fields
+            let objectCount = 0;
+            let fieldCount = 0;
+
+            if (objectPermissions) {
+              objectCount = objectPermissions.length;
+              objectPermissions.forEach(
+                ([objectIndex, objectPermissions, fieldPermissions]) => {
+                  fieldCount += fieldPermissions.length;
+                }
+              );
+            }
+
+            result.push({
+              name: profileName,
+              type: "Profile",
+              userCount: userCount,
+              permissionCount: permissionIndices ? permissionIndices.length : 0,
+              objectCount: objectCount,
+              fieldCount: fieldCount,
+            });
+          }
+        });
+
+        // Add permission sets
+        Object.keys(permissionSetPermissions).forEach((permissionSetName) => {
+          if (!permissionSetName.startsWith("[P] ")) {
+            const permissionIndices =
+              permissionSetPermissions[permissionSetName];
+            const objectPermissions = objectsPermissions[permissionSetName];
+
+            // Count users assigned to this permission set
+            const userCount = usersData.filter(
+              (user) =>
+                user.permissionSets &&
+                user.permissionSets.some((ps) => ps.value === permissionSetName)
+            ).length;
+
+            // Count objects and fields
+            let objectCount = 0;
+            let fieldCount = 0;
+
+            if (objectPermissions) {
+              objectCount = objectPermissions.length;
+              objectPermissions.forEach(
+                ([objectIndex, objectPermissions, fieldPermissions]) => {
+                  fieldCount += fieldPermissions.length;
+                }
+              );
+            }
+
+            result.push({
+              name: permissionSetName,
+              type: "Permission Set",
+              userCount: userCount,
+              permissionCount: permissionIndices ? permissionIndices.length : 0,
+              objectCount: objectCount,
+              fieldCount: fieldCount,
+            });
+          }
+        });
+
+        return result;
+      }
+
+      const profilesAndPermissionSetsData =
+        generateProfilesAndPermissionSetsData();
+
+      $(document).ready(function () {
+        initDataTableWithButtons(
+          "#masterTable",
+          "Profiles and Permission Sets",
+          true,
+          true,
+          {
+            data: profilesAndPermissionSetsData,
+            columns: [
+              { data: "name", render: renderName },
+              { data: "userCount" },
+              { data: "permissionCount" },
+              { data: "objectCount" },
+              { data: "fieldCount" },
+            ],
+          }
+        );
+
+        let clickTimer = null;
+        $("#masterTable tbody").on("click", "tr", function () {
+          const nameElement = $(this).find(".name");
+          const name =
+            nameElement.attr("data-original-name") || nameElement.text();
+          if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+            // Do nothing here; dblclick will handle
+          } else {
+            clickTimer = setTimeout(() => {
+              displayDetails(name, true); // single-click
+              clickTimer = null;
+            }, 300);
+          }
+        });
+
+        $("#masterTable tbody").on("dblclick", "tr", function (e) {
+          e.preventDefault();
+          if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+          }
+          const nameElement = $(this).find(".name");
+          const name =
+            nameElement.attr("data-original-name") || nameElement.text();
+          addAndDisplayDetails(name, true, false); // double-click
+        });
+
+        $(".menu .item").tab({
+          onVisible: initializeProfilePermissionSetDataTables,
+        });
+      });
+    </script>
+  </body>
+</html>

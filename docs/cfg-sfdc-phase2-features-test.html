@@ -1,0 +1,335 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Phase 2 Features Test - Salesforce Formula Syntax Highlighting
+    </title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="code icon"></i>
+        <div class="content">
+          Phase 2 Features Test
+          <div class="sub header">
+            Advanced Salesforce Formula Syntax Highlighting
+          </div>
+        </div>
+      </h1>
+
+      <div class="ui info message">
+        <div class="header">Phase 2 Features</div>
+        <ul class="list">
+          <li>
+            <strong>Nested Field References:</strong> Support for
+            [Account].[Name] and [Account.Name] syntax
+          </li>
+          <li>
+            <strong>Custom Function Support:</strong> Recognition of custom Apex
+            functions (lowercase)
+          </li>
+          <li>
+            <strong>Formula Field References:</strong> Highlighting of
+            references to other formula fields
+          </li>
+          <li>
+            <strong>Error Highlighting:</strong> Detection and highlighting of
+            syntax errors and invalid functions
+          </li>
+        </ul>
+      </div>
+
+      <!-- Nested Field References -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="linkify icon"></i>
+          Nested Field References
+        </h3>
+        <p>
+          Testing nested field references with dot notation and bracket
+          notation.
+        </p>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Bracket Notation: [Account].[Name]</h4>
+            <div id="nested-bracket"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Dot Notation: [Account.Name]</h4>
+            <div id="nested-dot"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Complex Nested: [Account].[Owner].[Name]</h4>
+            <div id="complex-nested"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Functions -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="cogs icon"></i>
+          Custom Function Support
+        </h3>
+        <p>
+          Testing recognition of custom Apex functions (lowercase identifiers
+          followed by parentheses).
+        </p>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Custom Function: calculateDiscount()</h4>
+            <div id="custom-function"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Custom Function with Parameters: getAccountType(AccountId)</h4>
+            <div id="custom-function-params"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>
+              Mixed Functions: IF(calculateDiscount() > 0, "Discount", "No
+              Discount")
+            </h4>
+            <div id="mixed-functions"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Formula Field References -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="database icon"></i>
+          Formula Field References
+        </h3>
+        <p>
+          Testing recognition of references to other formula fields (containing
+          underscores).
+        </p>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Formula Field: Total_Amount_Calculated</h4>
+            <div id="formula-field"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>
+              Formula Field in Expression: IF(Total_Amount_Calculated > 1000,
+              "High", "Low")
+            </h4>
+            <div id="formula-field-expression"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Multiple Formula Fields: Discount_Amount + Tax_Amount</h4>
+            <div id="multiple-formula-fields"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Error Highlighting -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="exclamation triangle icon"></i>
+          Error Highlighting
+        </h3>
+        <p>
+          Testing detection and highlighting of syntax errors and invalid
+          functions.
+        </p>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Invalid Function: INVALIDFUNC()</h4>
+            <div id="invalid-function"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Unmatched Parentheses: IF([Status] = "Active", "Yes"</h4>
+            <div id="unmatched-parens"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Unmatched Brackets: [Account.Name</h4>
+            <div id="unmatched-brackets"></div>
+          </div>
+          <div class="sixteen wide column">
+            <h4>Multiple Errors: INVALIDFUNC([Account.Name</h4>
+            <div id="multiple-errors"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Testing -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="edit icon"></i>
+          Interactive Testing
+        </h3>
+        <p>Test your own formulas with all Phase 2 features.</p>
+
+        <div class="ui form">
+          <div class="field">
+            <label>Enter a Salesforce formula:</label>
+            <textarea
+              id="test-formula"
+              rows="4"
+              placeholder="Enter a formula to test..."
+            ></textarea>
+          </div>
+          <button class="ui primary button" onclick="testFormula()">
+            Test Formula
+          </button>
+        </div>
+
+        <div class="ui divider"></div>
+
+        <div id="test-results"></div>
+      </div>
+
+      <!-- Token Analysis -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="search icon"></i>
+          Token Analysis
+        </h3>
+        <p>Detailed analysis of tokenization and classification.</p>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Raw Tokens</h4>
+            <pre
+              id="raw-tokens"
+              style="
+                background: #f5f5f5;
+                padding: 10px;
+                border-radius: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+              "
+            ></pre>
+          </div>
+          <div class="eight wide column">
+            <h4>Classified Tokens</h4>
+            <pre
+              id="classified-tokens"
+              style="
+                background: #f5f5f5;
+                padding: 10px;
+                border-radius: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+              "
+            ></pre>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="sixteen wide column">
+            <h4>Detected Errors</h4>
+            <pre
+              id="detected-errors"
+              style="
+                background: #f5f5f5;
+                padding: 10px;
+                border-radius: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+              "
+            ></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Test formulas for Phase 2 features
+      const testFormulas = {
+        "nested-bracket":
+          'IF([Account].[Name] = "Test Account", "Valid", "Invalid")',
+        "nested-dot":
+          'CASE([Account.Name], "Customer", "C", "Partner", "P", "Unknown")',
+        "complex-nested":
+          'TEXT([Account].[Owner].[Name]) + " - " + [Account].[Type]',
+        "custom-function": "calculateDiscount([Amount], [Discount_Percentage])",
+        "custom-function-params":
+          'IF(getAccountType([AccountId]) = "Premium", "High Priority", "Standard")',
+        "mixed-functions":
+          'IF(calculateDiscount() > 0, "Discount Applied", "No Discount")',
+        "formula-field": "Total_Amount_Calculated + Tax_Amount_Calculated",
+        "formula-field-expression":
+          'IF(Total_Amount_Calculated > 1000, "High Value", "Standard Value")',
+        "multiple-formula-fields":
+          "Discount_Amount + Tax_Amount + Shipping_Amount",
+        "invalid-function": "INVALIDFUNC([Account].[Name])",
+        "unmatched-parens": 'IF([Status] = "Active", "Yes"',
+        "unmatched-brackets": '[Account.Name + " - " + [Type]',
+        "multiple-errors": 'INVALIDFUNC([Account.Name + "Test"',
+      };
+
+      // Initialize test formulas
+      function initializeTests() {
+        Object.keys(testFormulas).forEach((id) => {
+          const container = document.getElementById(id);
+          if (container) {
+            container.innerHTML = createFormulaCodeBlock(testFormulas[id], {
+              prettify: true,
+              showCopyButton: true,
+            });
+          }
+        });
+      }
+
+      // Interactive testing function
+      function testFormula() {
+        const formula = document.getElementById("test-formula").value;
+        const resultsContainer = document.getElementById("test-results");
+
+        if (!formula.trim()) {
+          resultsContainer.innerHTML =
+            '<div class="ui warning message">Please enter a formula to test.</div>';
+          return;
+        }
+
+        // Tokenize and analyze
+        const tokens = tokenizeFormula(formula);
+        const classifiedTokens = classifyTokens(tokens);
+        const errors = detectFormulaErrors(formula);
+
+        // Display results
+        resultsContainer.innerHTML = `
+                <div class="ui segment">
+                    <h4>Highlighted Result:</h4>
+                    ${createFormulaCodeBlock(formula, { prettify: true, showCopyButton: true })}
+                </div>
+            `;
+
+        // Update token analysis
+        document.getElementById("raw-tokens").textContent = JSON.stringify(
+          tokens,
+          null,
+          2
+        );
+        document.getElementById("classified-tokens").textContent =
+          JSON.stringify(classifiedTokens, null, 2);
+        document.getElementById("detected-errors").textContent = JSON.stringify(
+          errors,
+          null,
+          2
+        );
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeTests();
+        initializeFormulaCopyButtons();
+      });
+    </script>
+  </body>
+</html>

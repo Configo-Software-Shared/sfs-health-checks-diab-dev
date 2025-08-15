@@ -19,6 +19,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
     <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="script/cfg-tabs.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
     <script type="text/javascript" src="20.ObjectSchema.js"></script>
     <title>Object Schema</title>
     <style>
@@ -38,6 +40,8 @@
           <th>Name</th>
           <th>Label</th>
           <th>Key Prefix</th>
+          <th>Fields</th>
+          <th>Validation Rules</th>
           <th>CustomObject</th>
         </tr>
       </thead>
@@ -65,14 +69,44 @@
         }
       }
 
-      function getObjectDetailsHtml(tabId, data) {
+      function renderValidationRuleName(data, type, row, meta) {
+        if (type === "display") {
+          return (
+            `<div class="name">${data}</div>` +
+            (row.active ? `<div class="ui green label">active</div>` : "")
+          );
+        } else {
+          return data;
+        }
+      }
+
+      function renderFieldCount(data, type, row, meta) {
+        const count = row.fields ? row.fields.length : 0;
+        if (type === "display") {
+          return count;
+        } else {
+          return count;
+        }
+      }
+
+      function renderValidationRuleCount(data, type, row, meta) {
+        const count = row.validationRules ? row.validationRules.length : 0;
+        if (type === "display") {
+          return count;
+        } else {
+          return count;
+        }
+      }
+
+      // Object Schema specific content generation
+      function generateObjectDetailsHtml(tabId, data) {
         let keyPrefixSection = "";
         if (data.keyPrefix !== "") {
           keyPrefixSection = `
-        <tr>
-          <td>Key Prefix</td>
-          <td>${data.keyPrefix}</td>
-        </tr>`;
+            <tr>
+              <td>Key Prefix</td>
+              <td>${data.keyPrefix}</td>
+            </tr>`;
         }
 
         let flagsSection = data.flags
@@ -82,64 +116,66 @@
         let customObjectSection = "";
         if (data.customObject) {
           customObjectSection = `
-        <tr>
-          <td>CustomObject</td>
-          <td>true</td>
-        </tr>`;
+            <tr>
+              <td>CustomObject</td>
+              <td>true</td>
+            </tr>`;
         }
 
         let topSection = `
-    <h2 class='ui header'>${data.name}</h2>
-    <table class="ui very basic collapsing celled table">
-      <tbody>
-        <tr>
-          <td>Label</td>
-          <td>${data.label}</td>
-        </tr>
-        <tr>
-          <td>Label Plural</td>
-          <td>${data.labelPlural}</td>
-        </tr>
-        ${keyPrefixSection}
-        <tr>
-          <td>Flags</td>
-          <td>
-            <div class="ui horizontal list">
-              ${flagsSection}
-            </div>
-          </td>
-        </tr>
-        <!-- TODO: Reinstate these when we have meaningful URLs available
-        <tr>
-          <td>URL Detail</td>
-          <td>${data.urlDetail}</td>
-        </tr>
-        <tr>
-          <td>URL Edit</td>
-          <td>${data.urlEdit}</td>
-        </tr>
-        <tr>
-          <td>URL New</td>
-          <td>${data.urlNew}</td>
-        </tr>
-         -->
-        ${customObjectSection}
-      </tbody>
-    </table>`;
+          <h2 class='ui header'>${data.name}</h2>
+          <table class="ui very basic collapsing celled table">
+            <tbody>
+              <tr>
+                <td>Label</td>
+                <td>${data.label}</td>
+              </tr>
+              <tr>
+                <td>Label Plural</td>
+                <td>${data.labelPlural}</td>
+              </tr>
+              ${keyPrefixSection}
+              <tr>
+                <td>Flags</td>
+                <td>
+                  <div class="ui horizontal list">
+                    ${flagsSection}
+                  </div>
+                </td>
+              </tr>
+              <!-- TODO: Reinstate these when we have meaningful URLs available
+              <tr>
+                <td>URL Detail</td>
+                <td>${data.urlDetail}</td>
+              </tr>
+              <tr>
+                <td>URL Edit</td>
+                <td>${data.urlEdit}</td>
+              </tr>
+              <tr>
+                <td>URL New</td>
+                <td>${data.urlNew}</td>
+              </tr>
+              -->
+              ${customObjectSection}
+            </tbody>
+          </table>`;
+
+        let linksSection = `<div class="ui horizontal list"><div class="item"><a href="#${tabId}-fields">Fields</a></div>`;
 
         let fieldsSectionHeader = `
-    <h3 class='ui header'>Fields</h3>
-    <table id='${tabId}-fields-table' class="ui collapsing celled table">
-      <thead>
-        <tr class="header">
-          <th>Name</th>
-          <th>Label</th>
-          <th>Type</th>
-          <th>Flags</th>
-          <th>CustomObject</th>
-        </tr>
-      </thead>
-      <tbody>`;
+          <h3 class='ui header' id='${tabId}-fields'>Fields</h3>
+          <table id='${tabId}-fields-table' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Name</th>
+                <th>Label</th>
+                <th>Type</th>
+                <th>Flags</th>
+                <th>CustomObject</th>
+              </tr>
+            </thead>
+            <tbody>`;
 
         let fieldsSection = data.fields
           .map((field) => {
@@ -152,8 +188,7 @@
             if (type !== null && typeof type === "object") {
               if (type.type === "picklist") {
                 type =
-                  `
-            <div>picklist <span class="ui labels">` +
+                  `<div>picklist <span class="ui labels">` +
                   type.values
                     .map(
                       (value) =>
@@ -163,12 +198,15 @@
                   "</span></div>";
               } else if (type.type === "reference") {
                 type =
-                  `
-            <div>reference <span class="ui labels">` +
+                  `<div>reference <span class="ui labels">` +
                   type.targets
                     .map(
                       (target) =>
-                        `<a class="ui primary basic label" onclick="addAndDisplayObjectDetails('${target}', true, false)"><i class="arrow right icon"></i>${target}</a>`
+                        `<a class="ui primary basic label"
+                          onclick="addAndDisplayDetails('${target}', false, false)"
+                          ondblclick="addAndDisplayDetails('${target}', true, true)">
+                          <i class="arrow right icon"></i>${target}
+                        </a>`
                     )
                     .join("") +
                   "</span></div>";
@@ -183,168 +221,147 @@
               .join("");
 
             return `
-        <tr>
-          <td>${name}</td>
-          <td>${field.label}</td>
-          <td>${type}</td>
-          <td>
-            <div class="ui labels">
-              ${flagsSection}
-            </div>
-          </td>
-          <td>${field.custom}</td>
-        </tr>`;
+              <tr>
+                <td>${name}</td>
+                <td>${field.label}</td>
+                <td>${type}</td>
+                <td>
+                  <div class="ui labels">
+                    ${flagsSection}
+                  </div>
+                </td>
+                <td>${field.custom}</td>
+              </tr>`;
           })
           .join("");
 
-        let fieldsSectionFooter = `
-      </tbody>
-    </table>`;
+        let fieldsSectionFooter = "</tbody></table>";
+
+        let validationRulesSection = "";
+        if (data.validationRules && data.validationRules.length > 0) {
+          linksSection += `<div class="item"><a href="#${tabId}-validation-rules">Validation Rules</a></div>`;
+
+          validationRulesSection = `<h3 class='ui header' id='${tabId}-validation-rules'>Validation Rules<a href="#${tabId}" style="float: right; font-size: 0.8em; font-weight: normal;"><i class="up arrow icon"></i>top</a></h3>
+          <table id='${tabId}-validation-rules-table' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Name</th>
+                <th>Active</th>
+                <th>Description</th>
+                <th>Formula</th>
+                <th>Display Field</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+          </table>`;
+        }
+
+        linksSection += `</div>`;
 
         return (
-          topSection + fieldsSectionHeader + fieldsSection + fieldsSectionFooter
+          topSection +
+          linksSection +
+          fieldsSectionHeader +
+          fieldsSection +
+          fieldsSectionFooter +
+          validationRulesSection
         );
       }
 
-      function displayObjectDetails(objName, scrollIntoView) {
-        let existingTab = document.getElementById(`tab-obj-${objName}`);
-        if (existingTab !== null) {
-          existingTab.click();
-        } else {
-          let objData = data.find((row) => row.name === objName);
-          if (objData) {
-            // Destroy existing DataTable if it exists
-            const tableSelector = "#tab-current-fields-table";
-            const dataTable =
-              $.fn.DataTable.isDataTable(tableSelector) ?
-                $(tableSelector).DataTable()
-              : null;
-            if (dataTable) {
-              dataTable.destroy();
-            }
+      function initializeObjectDetailsDataTables(tabId, data) {
+        // There are two cases: one with initialized tabId and data, and one where tabId is the identifier, and data is undefined.
+        if (data === undefined) {
+          data = findObjectDetails(tabId);
+          tabId = getTabId(tabId);
+        }
 
-            document.getElementById("tab-current").innerHTML =
-              getObjectDetailsHtml("tab-current", objData);
+        $(`#${tabId}-fields-table`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
             initDataTableWithButtons(
-              "#tab-current-fields-table",
-              `${objName} Fields`,
+              `#${this.id}`,
+              `Fields for ${data.name}`,
               true,
               true,
               {
                 pageLength: 50,
               }
             );
-          } else {
-            document.getElementById("tab-current").innerHTML =
-              `<div class="ui negative message">Object "${objName}" not found.</div>`;
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
           }
+        });
 
-          let menuItem = document.getElementById("tab-menu-current");
-          menuItem.innerHTML = `<i>${objName}</i>`;
-          menuItem.click();
-        }
-
-        if (scrollIntoView) {
-          document.getElementById("tab-menu").scrollIntoView();
-        }
-      }
-
-      function addAndDisplayObjectDetails(objName, showTab, scrollIntoView) {
-        let objTab = document.getElementById(`tab-obj-${objName}`);
-        let tabContent = document.querySelector(`[data-tab="${objName}"]`);
-
-        // Clean up orphaned content if tab doesn't exist but content does
-        if (objTab === null && tabContent !== null) {
-          tabContent.remove();
-          tabContent = null;
-        }
-
-        if (objTab === null) {
-          // Create new tab and content
-          let newTabDetail = document.createElement("div");
-          newTabDetail.setAttribute("class", "ui bottom attached tab segment");
-          newTabDetail.setAttribute("data-tab", objName);
-          document.getElementById("details").appendChild(newTabDetail);
-
-          objTab = document.createElement("a");
-          objTab.setAttribute("id", `tab-obj-${objName}`);
-          objTab.setAttribute("class", "item");
-          objTab.setAttribute("data-tab", objName);
-          objTab.innerHTML = `${objName} <i class="close icon" onclick="closeTab('${objName}', event)" style="margin-left: 0.5em; margin-right:-0.3em;"></i>`;
-          document.getElementById("tab-menu").appendChild(objTab);
-
-          tabContent = newTabDetail;
-          $(".menu .item").tab();
-
-          // Populate the content
-          let objData = data.find((row) => row.name === objName);
-          if (objData && tabContent) {
-            // Destroy existing DataTable if it exists
-            const tableSelector = `#tab-obj-${objName}-fields-table`;
-            const dataTable =
-              $.fn.DataTable.isDataTable(tableSelector) ?
-                $(tableSelector).DataTable()
-              : null;
-            if (dataTable) {
-              dataTable.destroy();
+        if (data.validationRules && data.validationRules.length > 0) {
+          $(`#${tabId}-validation-rules-table`).each(function () {
+            if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+              initDataTableWithButtons(
+                `#${this.id}`,
+                `Validation Rules for ${data.name}`,
+                true,
+                true,
+                {
+                  data: data.validationRules,
+                  columns: [
+                    { data: "name", render: renderValidationRuleName },
+                    { data: "active", type: "boolean", visible: false },
+                    {
+                      data: "description",
+                      type: "string",
+                      visible: false,
+                    },
+                    {
+                      data: "errorConditionFormula",
+                      render: renderSalesforceFormula(true, true),
+                    },
+                    {
+                      data: "errorDisplayField",
+                      type: "string",
+                    },
+                    {
+                      data: "errorMessage",
+                      type: "string",
+                    },
+                  ],
+                  pageLength: 50,
+                }
+              );
+            } else if ($.fn.DataTable.isDataTable(this)) {
+              $(this).DataTable().columns.adjust();
             }
-
-            tabContent.innerHTML = getObjectDetailsHtml(
-              `tab-obj-${objName}`,
-              objData
-            );
-            initDataTableWithButtons(
-              `#tab-obj-${objName}-fields-table`,
-              `${objName} Fields`,
-              true,
-              true,
-              {
-                pageLength: 50,
-              }
-            );
-          } else if (tabContent) {
-            tabContent.innerHTML = `<div class="ui negative message">Object "${objName}" not found.</div>`;
-          }
-        }
-
-        if (showTab) {
-          objTab.click();
-        }
-
-        if (scrollIntoView) {
-          document.getElementById("tab-menu").scrollIntoView();
+          });
         }
       }
 
-      function closeTab(objName, event) {
-        event.stopPropagation(); // Prevent tab activation when clicking close button
-
-        const tabElement = document.getElementById(`tab-obj-${objName}`);
-        const tabContent = document.querySelector(`[data-tab="${objName}"]`);
-
-        if (tabElement && tabContent) {
-          // Destroy DataTable instance before removing DOM elements
-          const tableSelector = `#tab-obj-${objName}-fields-table`;
-          const dataTable =
-            $.fn.DataTable.isDataTable(tableSelector) ?
-              $(tableSelector).DataTable()
-            : null;
-          if (dataTable) {
-            dataTable.destroy();
+      function cleanupObjectDetailsDataTables(tabId) {
+        [`#${tabId}-fields-table`, `#${tabId}-validation-rules-table`].map(
+          (selector) => {
+            if ($.fn.DataTable.isDataTable(selector)) {
+              $(selector).DataTable().destroy();
+            }
           }
+        );
+      }
 
-          // Remove tab and content
-          tabElement.remove();
-          tabContent.remove();
+      // Create tabbed details manager for object schema
+      const objectSchemaTabManager = createTabbedDetailsManager({
+        generateContent: generateObjectDetailsHtml,
+        initializeContent: initializeObjectDetailsDataTables,
+        cleanupContent: cleanupObjectDetailsDataTables,
+        getTabId: getTabId,
+        findData: findObjectDetails,
+        notFoundMessage: 'Object "{identifier}" not found.',
+      });
 
-          // If the closed tab was active, switch to the first tab
-          if (tabElement.classList.contains("active")) {
-            document.getElementById("tab-menu-current").click();
-          }
+      // Extract the functions for use in click handlers
+      const { displayDetails, addAndDisplayDetails, closeTab } =
+        objectSchemaTabManager;
 
-          // Reinitialize tabs
-          $(".menu .item").tab();
-        }
+      function findObjectDetails(name) {
+        return data.find((row) => row.name === name);
+      }
+
+      function getTabId(name) {
+        return `tab-obj-${name.replace(/[@\.]/g, "_")}`;
       }
 
       $(document).ready(function () {
@@ -359,6 +376,8 @@
               { data: "name", render: renderObjectName },
               { data: "label" },
               { data: "keyPrefix" },
+              { data: null, render: renderFieldCount },
+              { data: null, render: renderValidationRuleCount },
               { data: "customObject" },
             ],
           }
@@ -373,7 +392,7 @@
             // Do nothing here; dblclick will handle
           } else {
             clickTimer = setTimeout(() => {
-              displayObjectDetails(objName); // single-click
+              displayDetails(objName); // single-click
               clickTimer = null;
             }, 300);
           }
@@ -386,10 +405,12 @@
             clickTimer = null;
           }
           const objName = $(this).find(".name").text();
-          addAndDisplayObjectDetails(objName, true, false); // double-click
+          addAndDisplayDetails(objName, true, false); // double-click
         });
 
-        $(".menu .item").tab();
+        $(".menu .item").tab({
+          onVisible: initializeObjectDetailsDataTables,
+        });
       });
     </script>
   </body>

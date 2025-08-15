@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Debug Tokenization</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="bug icon"></i>
+        <div class="content">
+          Debug Tokenization
+          <div class="sub header">Step-by-step tokenization analysis</div>
+        </div>
+      </h1>
+
+      <div class="ui segment">
+        <h3 class="ui header">Raw Tokenization Test</h3>
+        <p>Let's see what tokens are actually being generated:</p>
+
+        <div class="ui form">
+          <div class="field">
+            <label>Test Formula:</label>
+            <input
+              type="text"
+              id="test-formula"
+              value="[Amount] >= 1000"
+              style="width: 100%"
+            />
+          </div>
+          <button class="ui button" onclick="analyzeTokens()">
+            Analyze Tokens
+          </button>
+        </div>
+
+        <div id="token-results" style="margin-top: 1rem"></div>
+      </div>
+
+      <div class="ui segment">
+        <h3 class="ui header">Prettification Test</h3>
+        <p>Let's see what the prettification function is doing:</p>
+
+        <div id="prettify-results"></div>
+      </div>
+
+      <div class="ui segment">
+        <h3 class="ui header">Operator Array Test</h3>
+        <p>Let's verify the OPERATORS array:</p>
+
+        <div id="operator-array-results"></div>
+      </div>
+    </div>
+
+    <script>
+      function analyzeTokens() {
+        const formula = document.getElementById("test-formula").value;
+        const results = document.getElementById("token-results");
+
+        // Get raw tokens
+        const tokens = tokenizeFormula(formula);
+        const classified = classifyTokens(tokens);
+
+        let html = `
+                <div class="ui info message">
+                    <div class="header">Token Analysis for: "${formula}"</div>
+                    <p><strong>Total tokens:</strong> ${tokens.length}</p>
+                </div>
+
+                <table class="ui celled table">
+                    <thead>
+                        <tr>
+                            <th>Index</th>
+                            <th>Type</th>
+                            <th>Value</th>
+                            <th>Position</th>
+                            <th>Classified As</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+        tokens.forEach((token, index) => {
+          const classifiedToken = classified[index];
+          html += `
+                    <tr>
+                        <td>${index}</td>
+                        <td><code>${token.type}</code></td>
+                        <td><code>"${token.value}"</code></td>
+                        <td>${token.start}-${token.end}</td>
+                        <td><code>${classifiedToken.type}</code></td>
+                    </tr>
+                `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            `;
+
+        results.innerHTML = html;
+      }
+
+      function testPrettification() {
+        const formula = document.getElementById("test-formula").value;
+        const results = document.getElementById("prettify-results");
+
+        const prettified = prettifySalesforceFormula(formula);
+
+        results.innerHTML = `
+                <div class="ui info message">
+                    <div class="header">Prettification Test</div>
+                    <p><strong>Original:</strong> "${formula}"</p>
+                    <p><strong>Prettified:</strong> "${prettified}"</p>
+                    <p><strong>Length difference:</strong> ${prettified.length - formula.length}</p>
+                </div>
+            `;
+      }
+
+      function testOperatorArray() {
+        const results = document.getElementById("operator-array-results");
+
+        results.innerHTML = `
+                <div class="ui info message">
+                    <div class="header">OPERATORS Array</div>
+                    <p><strong>Operators:</strong> ${OPERATORS.join(", ")}</p>
+                    <p><strong>Count:</strong> ${OPERATORS.length}</p>
+                    <p><strong>First 5:</strong> ${OPERATORS.slice(0, 5).join(", ")}</p>
+                </div>
+            `;
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        analyzeTokens();
+        testPrettification();
+        testOperatorArray();
+      });
+    </script>
+  </body>
+</html>

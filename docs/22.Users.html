@@ -1,0 +1,431 @@
+<html lang="en" style="padding: 20px">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="script/cfg-tabs.js"></script>
+    <script type="text/javascript" src="21.Permissions.js"></script>
+    <title>Users</title>
+    <style>
+      #masterTable tbody tr {
+        cursor: pointer;
+      }
+      #masterTable tbody tr:hover {
+        background-color: whitesmoke;
+      }
+    </style>
+  </head>
+  <body>
+    <h2 class="ui header">Users</h2>
+    <table id="masterTable" class="ui celled table">
+      <thead>
+        <tr class="header">
+          <th>Username</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>User Type</th>
+          <th>Profile</th>
+          <th>Permission Sets</th>
+          <th>Flags</th>
+        </tr>
+      </thead>
+    </table>
+    <div id="details" style="margin-top: 20px">
+      <div id="tab-menu" class="ui top attached tabular menu">
+        <a id="tab-menu-current" class="active item" data-tab="tab-current">
+          <i>Current</i>
+        </a>
+      </div>
+      <div
+        id="tab-current"
+        class="ui bottom attached active tab segment"
+        data-tab="tab-current"
+      >
+        <!--Container to display the current object.-->
+      </div>
+    </div>
+    <script>
+      // User-specific render functions
+      function renderName(data, type, row, meta) {
+        if (type === "display") {
+          return "<div class='name'>" + data + "</div>";
+        } else {
+          return data;
+        }
+      }
+
+      function renderPermissionSources(data, type, row, meta) {
+        if (type === "display") {
+          return (
+            "<div class='ui horizontal list'>" +
+            Object.keys(data)
+              .map((s) =>
+                s.startsWith("[P] ") ?
+                  `<div class="item"><div class="ui blue horizontal label">P</div>${s.substring(4)}</div>`
+                : `<div class="item"><div class="ui teal horizontal label">PS</div>${s}</div>`
+              )
+              .join("") +
+            "</div>"
+          );
+        } else {
+          return Object.keys(data).join("||");
+        }
+      }
+
+      function renderObjectPermissionSources(data, type, row, meta) {
+        if (type === "display") {
+          const permissionTypes = Object.keys(data).sort();
+          return (
+            "<div class='ui vertical list'>" +
+            permissionTypes
+              .map((permissionType) => {
+                const sources = data[permissionType];
+                const sourceItems = sources
+                  .map((s) =>
+                    s.startsWith("[P] ") ?
+                      `<div class="item"><div class="ui blue horizontal label">P</div>${s.substring(4)}</div>`
+                    : `<div class="item"><div class="ui teal horizontal label">PS</div>${s}</div>`
+                  )
+                  .join("");
+                return `<div class="item">
+                    <div class="ui purple horizontal label">${permissionType}</div>
+                    <div class="ui horizontal list">${sourceItems}</div>
+                  </div>`;
+              })
+              .join("") +
+            "</div>"
+          );
+        } else {
+          return Object.keys(data).map((permission) => {
+            return `[${permission}]=>{${data[permission].join(", ")}}`;
+          });
+        }
+      }
+
+      // User-specific content generation
+      const permissionSuffix = "permissions";
+      const objectSuffix = "objects";
+
+      function generateUserDetailsHtml(tabId, data) {
+        let permissionSetsSection = data.permissionSets
+          .map(
+            (permissionSet) =>
+              `<div class="item">${renderXoomReference(false)(permissionSet, "display")}</div>`
+          )
+          .join("");
+
+        let flagsSection = data.flags
+          .map((flag) => `<div class="item">${flag}</div>`)
+          .join("");
+
+        let topSection = `
+          <h2 class='ui header'>${data.name}</h2>
+          <table class="ui very basic collapsing celled table">
+            <tbody>
+              <tr>
+                <td>Username</td>
+                <td>${data.username}</td>
+              </tr>
+              <tr>
+                <td>Email</td>
+                <td>${data.email}</td>
+              </tr>
+              <tr>
+                <td>User Type</td>
+                <td>${data.userType}</td>
+              </tr>
+              <tr>
+                <td>Profile</td>
+                <td>${renderXoomReference(false)(data.profile, "display")}</td>
+              </tr>
+              <tr>
+                <td>Permission Sets</td>
+                <td><div class="ui horizontal list">${permissionSetsSection}</div></td>
+              </tr>
+              <tr>
+                <td>Flags</td>
+                <td><div class="ui list">${flagsSection}</div></td>
+              </tr>
+            </tbody>
+          </table>`;
+
+        let permissionsSection = `
+          <h3 class='ui header'>Permissions</h3>
+          <table id='${tabId}-${permissionSuffix}' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Permission</th>
+                <th>Sources</th>
+              </tr>
+            </thead>
+          </table>`;
+
+        let objectsSection = `
+          <h3 class='ui header'>Object Permissions</h3>
+          <table id='${tabId}-${objectSuffix}' class="ui celled table">
+            <thead>
+              <tr class="header">
+                <th>Object/Field</th>
+                <th>Sources</th>
+              </tr>
+            </thead>
+          </table>`;
+
+        return topSection + permissionsSection + objectsSection;
+      }
+
+      function initializeUserDataTables(tabId, data) {
+        // There are two cases: one with initialized tabId and data, and one where tabId is the identifier, and data is undefined.
+        if (data === undefined) {
+          data = findUser(tabId);
+          tabId = getTabId(tabId);
+        }
+
+        $(`#${tabId}-${permissionSuffix}`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+            initDataTableWithButtons(
+              `#${this.id}`,
+              `Permissions for ${data.username}`,
+              true,
+              true,
+              {
+                data: getPermissionsData(data),
+                columns: [
+                  { title: "Permission" },
+                  { title: "Sources", render: renderPermissionSources },
+                ],
+              }
+            );
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
+          }
+        });
+
+        $(`#${tabId}-${objectSuffix}`).each(function () {
+          if ($.fn.dataTable && !$.fn.dataTable.isDataTable(this)) {
+            initDataTableWithButtons(
+              `#${this.id}`,
+              `Object Permissions for ${data.username}`,
+              true,
+              true,
+              {
+                data: getObjectPermissionsData(data),
+                columns: [
+                  { title: "Object/Field" },
+                  { title: "Sources", render: renderObjectPermissionSources },
+                ],
+              }
+            );
+          } else if ($.fn.dataTable.isDataTable(this)) {
+            $(this).DataTable().columns.adjust();
+          }
+        });
+      }
+
+      function cleanupUserDataTables(tabId) {
+        const tableSelector = `#${tabId}-${permissionSuffix}`;
+        const dataTable =
+          $.fn.DataTable.isDataTable(tableSelector) ?
+            $(tableSelector).DataTable()
+          : null;
+        if (dataTable) {
+          dataTable.destroy();
+        }
+
+        const objectsTableSelector = `#${tabId}-${objectSuffix}`;
+        const objectsDataTable =
+          $.fn.DataTable.isDataTable(objectsTableSelector) ?
+            $(objectsTableSelector).DataTable()
+          : null;
+        if (objectsDataTable) {
+          objectsDataTable.destroy();
+        }
+      }
+
+      // Create tabbed details manager for users
+      const userTabManager = createTabbedDetailsManager({
+        generateContent: generateUserDetailsHtml,
+        initializeContent: initializeUserDataTables,
+        cleanupContent: cleanupUserDataTables,
+        getTabId: getTabId,
+        findData: findUser,
+        notFoundMessage: 'User "{identifier}" not found.',
+      });
+
+      // Extract the functions for use in click handlers
+      const { displayDetails, addAndDisplayDetails, closeTab } = userTabManager;
+
+      function getPermissionsData(data) {
+        // Get all permission sets that the user has, including profile
+        const userPermissionSets = [
+          `[P] ${data.profile.value}`,
+          ...data.permissionSets.map((ps) => ps.value),
+        ];
+
+        // Create a map to store permission -> permission sets mapping
+        const permissionToPermissionSets = {};
+
+        // Iterate through each permission set the user has
+        userPermissionSets.forEach((permissionSetName) => {
+          // Get the permission indices for this permission set
+          const permissionIndices = permissionSetPermissions[permissionSetName];
+
+          if (permissionIndices) {
+            // For each permission index, add this permission set to the mapping
+            permissionIndices.forEach((permissionIndex) => {
+              const permission = permissionsArray[permissionIndex];
+              if (permission) {
+                if (!permissionToPermissionSets[permission]) {
+                  permissionToPermissionSets[permission] = {};
+                }
+                permissionToPermissionSets[permission][permissionSetName] =
+                  permissionIndices;
+              }
+            });
+          }
+        });
+
+        // Convert to the required format: [permission, permissionSetsObject]
+        return Object.entries(permissionToPermissionSets).map(
+          ([permission, permissionSetsObj]) => [permission, permissionSetsObj]
+        );
+      }
+
+      function getObjectPermissionsData(data) {
+        // Get all permission sets that the user has, including profile
+        const userPermissionSets = [
+          `[P] ${data.profile.value}`,
+          ...data.permissionSets.map((ps) => ps.value).sort(),
+        ];
+
+        // Create a map to store object/field -> permission types -> permission sets mapping
+        const objectToPermissionTypes = {};
+
+        // Iterate through each permission set the user has
+        userPermissionSets.forEach((permissionSetName) => {
+          // Get the object permissions for this permission set
+          const objectPermissions = objectsPermissions[permissionSetName];
+
+          if (objectPermissions) {
+            // For each object permission entry
+            objectPermissions.forEach(
+              ([objectIndex, objectPermissions, fieldPermissions]) => {
+                const object = objectsArray[objectIndex];
+                if (object) {
+                  const objectName = object.o;
+
+                  // Add object-level permissions
+                  if (!objectToPermissionTypes[objectName]) {
+                    objectToPermissionTypes[objectName] = {};
+                  }
+                  if (!objectToPermissionTypes[objectName][objectPermissions]) {
+                    objectToPermissionTypes[objectName][objectPermissions] = [];
+                  }
+                  objectToPermissionTypes[objectName][objectPermissions].push(
+                    permissionSetName
+                  );
+
+                  // Add field-level permissions
+                  fieldPermissions.forEach(([fieldIndex, fieldPermissions]) => {
+                    const fieldName = object.fs[fieldIndex];
+                    if (fieldName) {
+                      const fieldKey = `${objectName}.${fieldName}`;
+                      if (!objectToPermissionTypes[fieldKey]) {
+                        objectToPermissionTypes[fieldKey] = {};
+                      }
+                      if (
+                        !objectToPermissionTypes[fieldKey][fieldPermissions]
+                      ) {
+                        objectToPermissionTypes[fieldKey][fieldPermissions] =
+                          [];
+                      }
+                      objectToPermissionTypes[fieldKey][fieldPermissions].push(
+                        permissionSetName
+                      );
+                    }
+                  });
+                }
+              }
+            );
+          }
+        });
+
+        // Convert to the required format: [object/field, permissionTypesObject]
+        return Object.entries(objectToPermissionTypes).map(
+          ([objectOrField, permissionTypesObj]) => [
+            objectOrField,
+            permissionTypesObj,
+          ]
+        );
+      }
+
+      function findUser(name) {
+        return usersData.find((u) => u.username === name);
+      }
+
+      function getTabId(username) {
+        return `tab-user-${username.replace(/[@\.]/g, "_")}`;
+      }
+
+      $(document).ready(function () {
+        initDataTableWithButtons("#masterTable", "Users", true, true, {
+          data: usersData,
+          columns: [
+            { data: "username", render: renderName },
+            { data: "name" },
+            { data: "email" },
+            { data: "userType" },
+            { data: "profile", render: renderXoomReference(false) },
+            { data: "permissionSets", render: renderXoomReferences(false) },
+            { data: "flags", render: renderList },
+          ],
+        });
+
+        let clickTimer = null;
+        $("#masterTable tbody").on("click", "tr", function () {
+          const username = $(this).find(".name").text();
+          if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+            // Do nothing here; dblclick will handle
+          } else {
+            clickTimer = setTimeout(() => {
+              displayDetails(username, true); // single-click
+              clickTimer = null;
+            }, 300);
+          }
+        });
+
+        $("#masterTable tbody").on("dblclick", "tr", function (e) {
+          e.preventDefault();
+          if (clickTimer) {
+            clearTimeout(clickTimer);
+            clickTimer = null;
+          }
+          const username = $(this).find(".name").text();
+          addAndDisplayDetails(username, true, false); // double-click
+        });
+
+        $(".menu .item").tab({
+          onVisible: initializeUserDataTables,
+        });
+      });
+    </script>
+  </body>
+</html>

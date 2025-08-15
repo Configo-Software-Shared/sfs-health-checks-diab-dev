@@ -1,0 +1,386 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Phase 3 Features Test - Visual Enhancements</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="paint brush icon"></i>
+        <div class="content">
+          Phase 3 Features Test
+          <div class="sub header">
+            Visual Enhancements for Salesforce Formula Syntax Highlighting
+          </div>
+        </div>
+      </h1>
+
+      <div class="ui info message">
+        <div class="header">Phase 3 Features</div>
+        <ul class="list">
+          <li>
+            <strong>Dark Mode Support:</strong> Alternative color scheme for
+            dark backgrounds
+          </li>
+          <li>
+            <strong>Custom Themes:</strong> User-selectable color schemes
+            (Light, Dark, Solarized, Monokai)
+          </li>
+          <li>
+            <strong>Line Numbers:</strong> Optional line numbering for complex
+            formulas
+          </li>
+          <li>
+            <strong>Collapsible Sections:</strong> Ability to collapse/expand
+            long formula sections
+          </li>
+        </ul>
+      </div>
+
+      <!-- Theme Selection -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="palette icon"></i>
+          Theme Selection
+        </h3>
+        <p>
+          Select a theme to see how it affects all formula displays on this
+          page:
+        </p>
+
+        <div class="ui form">
+          <div class="field">
+            <label>Choose Theme:</label>
+            <select class="ui dropdown" id="global-theme-selector">
+              <option value="light">Light</option>
+              <option value="dark">Dark</option>
+              <option value="solarized">Solarized</option>
+              <option value="monokai">Monokai</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic Formula with Theme Selector -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="code icon"></i>
+          Basic Formula with Theme Selector
+        </h3>
+        <p>This formula has its own theme selector and line numbers:</p>
+        <div id="basic-formula"></div>
+      </div>
+
+      <!-- Complex Formula with Line Numbers -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="list ol icon"></i>
+          Complex Formula with Line Numbers
+        </h3>
+        <p>
+          This complex formula includes line numbers for better readability:
+        </p>
+        <div id="complex-formula"></div>
+      </div>
+
+      <!-- Long Formula with Collapse Toggle -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="compress icon"></i>
+          Long Formula with Collapse Toggle
+        </h3>
+        <p>
+          This long formula can be collapsed to save space. Click the chevron
+          icon to toggle:
+        </p>
+        <div id="long-formula"></div>
+      </div>
+
+      <!-- Multiple Formulas with Different Settings -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="th list icon"></i>
+          Multiple Formulas with Different Settings
+        </h3>
+        <p>Each formula demonstrates different Phase 3 features:</p>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Formula with Line Numbers Only:</h4>
+            <div id="formula-line-numbers"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Formula with Collapse Toggle Only:</h4>
+            <div id="formula-collapse"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Formula with Max Height (3 lines):</h4>
+            <div id="formula-max-height"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Formula with All Features:</h4>
+            <div id="formula-all-features"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Theme Comparison -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="eye icon"></i>
+          Theme Comparison
+        </h3>
+        <p>Compare the same formula across different themes:</p>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Light Theme:</h4>
+            <div id="theme-light"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Dark Theme:</h4>
+            <div id="theme-dark"></div>
+          </div>
+        </div>
+
+        <div class="ui grid">
+          <div class="eight wide column">
+            <h4>Solarized Theme:</h4>
+            <div id="theme-solarized"></div>
+          </div>
+          <div class="eight wide column">
+            <h4>Monokai Theme:</h4>
+            <div id="theme-monokai"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- API Functions Demo -->
+      <div class="ui segment">
+        <h3 class="ui header">
+          <i class="cogs icon"></i>
+          API Functions Demo
+        </h3>
+        <p>Test the Phase 3 API functions:</p>
+
+        <div class="ui buttons">
+          <button class="ui button" onclick="testThemeFunctions()">
+            Test Theme Functions
+          </button>
+          <button class="ui button" onclick="testLineNumbers()">
+            Test Line Numbers
+          </button>
+          <button class="ui button" onclick="testCollapse()">
+            Test Collapse
+          </button>
+        </div>
+
+        <div id="api-results" style="margin-top: 1rem"></div>
+      </div>
+    </div>
+
+    <script>
+      // Test formulas
+      const testFormulas = {
+        basic: 'IF([Status] = "Active", "Yes", "No")',
+        complex: `IF(AND([Account].[Type] = "Customer",
+    [Amount] >= 1000),
+    "VIP Customer",
+    IF([Account].[Type] = "Partner",
+        "Partner Account",
+        "Standard Customer"))`,
+        long: `IF(AND(
+    [Account].[Type] = "Customer",
+    [Account].[Industry] = "Technology",
+    [Amount] >= 5000,
+    [CloseDate] >= TODAY()
+),
+"High Priority Tech Customer",
+IF(AND(
+    [Account].[Type] = "Partner",
+    [Account].[Industry] = "Healthcare",
+    [Amount] >= 3000
+),
+"Healthcare Partner",
+IF([Account].[Type] = "Prospect",
+    "New Prospect",
+    "Standard Account"
+)))`,
+        multiLine: `CASE([Priority],
+    "High", "Urgent - Immediate Action Required",
+    "Medium", "Normal Priority - Standard Processing",
+    "Low", "Low Priority - Process When Available",
+    "Critical", "Critical - Escalate Immediately",
+    "Standard"
+)`,
+        nested: 'TEXT([Account].[Owner].[Name]) + " - " + [Account].[Type]',
+        complexNested: `IF(AND(
+    [Account].[Type] = "Customer",
+    [Account].[Owner].[Profile].[Name] = "System Administrator",
+    [Amount] >= 10000
+),
+"VIP Admin Customer",
+IF([Account].[Owner].[Manager].[Department] = "Sales",
+    "Sales Managed Account",
+    "Standard Customer Account"
+))`,
+      };
+
+      function initializeTests() {
+        // Basic formula with theme selector and line numbers
+        document.getElementById("basic-formula").innerHTML =
+          createFormulaCodeBlock(testFormulas.basic, {
+            prettify: true,
+            showCopyButton: true,
+            showThemeSelector: true,
+            showLineNumbers: true,
+          });
+
+        // Complex formula with line numbers
+        document.getElementById("complex-formula").innerHTML =
+          createFormulaCodeBlock(testFormulas.complex, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        // Long formula with collapse toggle
+        document.getElementById("long-formula").innerHTML =
+          createFormulaCodeBlock(testFormulas.long, {
+            prettify: true,
+            showCopyButton: true,
+            showCollapseToggle: true,
+          });
+
+        // Formula with line numbers only
+        document.getElementById("formula-line-numbers").innerHTML =
+          createFormulaCodeBlock(testFormulas.multiLine, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        // Formula with collapse toggle only
+        document.getElementById("formula-collapse").innerHTML =
+          createFormulaCodeBlock(testFormulas.nested, {
+            prettify: true,
+            showCopyButton: true,
+            showCollapseToggle: true,
+          });
+
+        // Formula with max height
+        document.getElementById("formula-max-height").innerHTML =
+          createFormulaCodeBlock(testFormulas.complex, {
+            prettify: true,
+            showCopyButton: true,
+            maxLines: 3,
+          });
+
+        // Formula with all features
+        document.getElementById("formula-all-features").innerHTML =
+          createFormulaCodeBlock(testFormulas.long, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+            showThemeSelector: true,
+            showCollapseToggle: true,
+          });
+
+        // Theme comparison formulas
+        document.getElementById("theme-light").innerHTML =
+          createFormulaCodeBlock(testFormulas.complexNested, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        document.getElementById("theme-dark").innerHTML =
+          createFormulaCodeBlock(testFormulas.complexNested, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        document.getElementById("theme-solarized").innerHTML =
+          createFormulaCodeBlock(testFormulas.complexNested, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+
+        document.getElementById("theme-monokai").innerHTML =
+          createFormulaCodeBlock(testFormulas.complexNested, {
+            prettify: true,
+            showCopyButton: true,
+            showLineNumbers: true,
+          });
+      }
+
+      function testThemeFunctions() {
+        const results = document.getElementById("api-results");
+        const currentTheme = getCurrentTheme();
+        const availableThemes = getAvailableThemes();
+
+        results.innerHTML = `
+                <div class="ui info message">
+                    <div class="header">Theme API Test Results</div>
+                    <p><strong>Current Theme:</strong> ${currentTheme}</p>
+                    <p><strong>Available Themes:</strong> ${availableThemes.join(", ")}</p>
+                    <p><strong>Theme Count:</strong> ${availableThemes.length}</p>
+                </div>
+            `;
+      }
+
+      function testLineNumbers() {
+        const results = document.getElementById("api-results");
+        const formula = testFormulas.multiLine;
+        const lines = formula.split("\n").length;
+
+        results.innerHTML = `
+                <div class="ui success message">
+                    <div class="header">Line Numbers Test</div>
+                    <p><strong>Formula Lines:</strong> ${lines}</p>
+                    <p><strong>Line Numbers Generated:</strong> ${lines} numbers</p>
+                </div>
+            `;
+      }
+
+      function testCollapse() {
+        const results = document.getElementById("api-results");
+
+        results.innerHTML = `
+                <div class="ui warning message">
+                    <div class="header">Collapse Test</div>
+                    <p>Click the chevron icons in the formulas above to test collapse functionality.</p>
+                    <p>The collapse feature works by adding/removing the 'collapsed' CSS class.</p>
+                </div>
+            `;
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeTests();
+        initializeFormulaCopyButtons();
+
+        // Set up global theme selector
+        document
+          .getElementById("global-theme-selector")
+          .addEventListener("change", function () {
+            setFormulaTheme(this.value);
+          });
+      });
+    </script>
+  </body>
+</html>

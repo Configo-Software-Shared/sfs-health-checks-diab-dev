@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Formula Tokenizer Test</title>
+    <style>
+      .sf-function {
+        color: #0066cc;
+        font-weight: bold;
+      }
+      .sf-field {
+        color: #009900;
+        font-weight: bold;
+      }
+      .sf-operator {
+        color: #666666;
+        font-weight: bold;
+      }
+      .sf-string {
+        color: #cc0066;
+      }
+      .sf-number {
+        color: #0066cc;
+        font-weight: bold;
+      }
+      .sf-constant {
+        color: #cc6600;
+        font-weight: bold;
+      }
+      .sf-formula-code {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 8px 0;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 13px;
+        line-height: 1.4;
+        overflow-x: auto;
+        white-space: pre-wrap;
+        word-wrap: break-word;
+      }
+      .token-list {
+        background-color: #f8f9fa;
+        border: 1px solid #e9ecef;
+        border-radius: 4px;
+        padding: 12px;
+        margin: 8px 0;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+        font-size: 12px;
+        line-height: 1.3;
+        max-height: 200px;
+        overflow-y: auto;
+      }
+      .token {
+        display: inline-block;
+        margin: 2px;
+        padding: 2px 4px;
+        border-radius: 3px;
+        font-size: 11px;
+      }
+      .token-function {
+        background-color: #e6f3ff;
+        color: #0066cc;
+      }
+      .token-field {
+        background-color: #e6ffe6;
+        color: #009900;
+      }
+      .token-operator {
+        background-color: #f0f0f0;
+        color: #666666;
+      }
+      .token-string {
+        background-color: #ffe6f0;
+        color: #cc0066;
+      }
+      .token-number {
+        background-color: #e6f3ff;
+        color: #0066cc;
+      }
+      .token-constant {
+        background-color: #fff2e6;
+        color: #cc6600;
+      }
+      .token-whitespace {
+        background-color: #f8f9fa;
+        color: #666666;
+      }
+      .token-identifier {
+        background-color: #f8f9fa;
+        color: #333333;
+      }
+      .token-parenthesis {
+        background-color: #f8f9fa;
+        color: #333333;
+      }
+      .token-comma {
+        background-color: #f8f9fa;
+        color: #333333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Formula Tokenizer Test</h1>
+
+    <div class="ui segment">
+      <h3>Test Formulas</h3>
+      <div class="ui form">
+        <div class="field">
+          <label>Enter a Salesforce Formula:</label>
+          <textarea
+            id="formulaInput"
+            rows="3"
+            placeholder="Enter your Salesforce formula here..."
+          >
+IF([Status] = "Active", "Yes", "No")</textarea
+          >
+        </div>
+        <button class="ui primary button" onclick="testFormula()">
+          Test Formula
+        </button>
+      </div>
+    </div>
+
+    <div class="ui segment">
+      <h3>Token Analysis</h3>
+      <div id="tokenAnalysis"></div>
+    </div>
+
+    <div class="ui segment">
+      <h3>Final Output</h3>
+      <div id="finalOutput"></div>
+    </div>
+
+    <div class="ui segment">
+      <h3>Predefined Tests</h3>
+      <div id="predefinedTests"></div>
+    </div>
+
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+    <script>
+      const testFormulas = [
+        'IF([Status] = "Active", "Yes", "No")',
+        'TRIM([FirstName]) & " " & TRIM([LastName])',
+        'CASE(WEEKDAY([CreatedDate]), 1, "Sunday", 2, "Monday")',
+        'IF(AND([Type] = "Customer", [Rating] = "Hot"), "Premium", "Standard")',
+        "LEFT([Name], 1) & LOWER(MID([Name], 2, LEN([Name])))",
+        "TODAY() - [CreatedDate]",
+        "ISBLANK([AccountId])",
+        "TRUE",
+        "FALSE",
+        "NULL",
+      ];
+
+      function testFormula() {
+        const formula = document.getElementById("formulaInput").value;
+        if (!formula.trim()) return;
+
+        analyzeFormula(formula);
+      }
+
+      function analyzeFormula(formula) {
+        console.log("Testing formula:", formula);
+
+        // Step 1: Tokenize
+        const tokens = tokenizeFormula(formula);
+        console.log("Tokens:", tokens);
+
+        // Step 2: Classify
+        const classifiedTokens = classifyTokens(tokens);
+        console.log("Classified tokens:", classifiedTokens);
+
+        // Step 3: Render
+        const html = renderTokens(classifiedTokens);
+        console.log("HTML:", html);
+
+        // Display token analysis
+        displayTokenAnalysis(tokens, classifiedTokens);
+
+        // Display final output
+        displayFinalOutput(formula, html);
+      }
+
+      function displayTokenAnalysis(tokens, classifiedTokens) {
+        const container = document.getElementById("tokenAnalysis");
+
+        let html = "<h4>Raw Tokens:</h4>";
+        html += '<div class="token-list">';
+        tokens.forEach((token, index) => {
+          html += `<span class="token token-${token.type}" title="${token.type}">${token.value}</span>`;
+        });
+        html += "</div>";
+
+        html += "<h4>Classified Tokens:</h4>";
+        html += '<div class="token-list">';
+        classifiedTokens.forEach((token, index) => {
+          html += `<span class="token token-${token.type}" title="${token.type}">${token.value}</span>`;
+        });
+        html += "</div>";
+
+        html += "<h4>Token Details:</h4>";
+        html += '<div class="token-list">';
+        classifiedTokens.forEach((token, index) => {
+          html += `<div><strong>${index}:</strong> ${token.type} = "${token.value}" (${token.start}-${token.end})</div>`;
+        });
+        html += "</div>";
+
+        container.innerHTML = html;
+      }
+
+      function displayFinalOutput(formula, html) {
+        const container = document.getElementById("finalOutput");
+
+        container.innerHTML = `
+          <h4>Original Formula:</h4>
+          <div class="sf-formula-code">${formula}</div>
+
+          <h4>Highlighted Formula:</h4>
+          <div class="sf-formula-code">${html}</div>
+
+          <h4>Code Block:</h4>
+          ${createFormulaCodeBlock(formula, { showCopyButton: true })}
+        `;
+      }
+
+      function runPredefinedTests() {
+        const container = document.getElementById("predefinedTests");
+        let html = "";
+
+        testFormulas.forEach((formula, index) => {
+          const tokens = tokenizeFormula(formula);
+          const classifiedTokens = classifyTokens(tokens);
+          const highlightedHtml = renderTokens(classifiedTokens);
+
+          html += `
+            <div style="margin-bottom: 20px; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+              <h4>Test ${index + 1}: ${formula}</h4>
+              <div class="sf-formula-code">${highlightedHtml}</div>
+              <div style="font-size: 11px; color: #666; margin-top: 5px;">
+                Tokens: ${tokens.length} | Classified: ${classifiedTokens.filter((t) => t.type !== "whitespace").length}
+              </div>
+            </div>
+          `;
+        });
+
+        container.innerHTML = html;
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", function () {
+        // Test the default formula
+        testFormula();
+
+        // Run predefined tests
+        runPredefinedTests();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prettification Debug Test</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+    <script type="text/javascript" src="script/cfg-sfdc-tokens.js"></script>
+  </head>
+  <body>
+    <div class="ui container" style="margin-top: 2rem">
+      <h1 class="ui header">
+        <i class="bug icon"></i>
+        <div class="content">
+          Prettification Debug Test
+          <div class="sub header">Step-by-step prettification analysis</div>
+        </div>
+      </h1>
+
+      <div class="ui segment">
+        <h3 class="ui header">Step-by-Step Analysis</h3>
+        <div id="step-analysis"></div>
+      </div>
+    </div>
+
+    <script>
+      function analyzePrettification() {
+        const formula = "[Amount] >= 1000";
+        const results = document.getElementById("step-analysis");
+
+        let html = `
+                <div class="ui info message">
+                    <div class="header">Original Formula</div>
+                    <p><code>${formula}</code></p>
+                </div>
+            `;
+
+        // Step 1: Replace multi-character operators with placeholders
+        let step1 = formula
+          .replace(/<=/g, "___LESS_EQUAL___")
+          .replace(/>=/g, "___GREATER_EQUAL___")
+          .replace(/<>/g, "___NOT_EQUAL___")
+          .replace(/&&/g, "___AND___")
+          .replace(/\|\|/g, "___OR___");
+        html += `
+                <div class="ui message">
+                    <div class="header">Step 1: Replace multi-character operators with placeholders</div>
+                    <p><code>${step1}</code></p>
+                </div>
+            `;
+
+        // Step 2: Process single-character operators
+        let step2 = step1
+          .replace(/\s*=\s*/g, " = ")
+          .replace(/\s*>\s*/g, " > ")
+          .replace(/\s*<\s*/g, " < ")
+          .replace(/\s*\+\s*/g, " + ")
+          .replace(/\s*-\s*/g, " - ")
+          .replace(/\s*\*\s*/g, " * ")
+          .replace(/\s*\/\s*/g, " / ");
+        html += `
+                <div class="ui message">
+                    <div class="header">Step 2: Process single-character operators</div>
+                    <p><code>${step2}</code></p>
+                </div>
+            `;
+
+        // Step 3: Process parentheses and commas
+        let step3 = step2.replace(/\s*([(),])\s*/g, "$1 ");
+        html += `
+                <div class="ui message">
+                    <div class="header">Step 3: Process parentheses and commas</div>
+                    <p><code>${step3}</code></p>
+                </div>
+            `;
+
+        // Step 4: Normalize whitespace
+        let step4 = step3.replace(/\s+/g, " ");
+        html += `
+                <div class="ui message">
+                    <div class="header">Step 4: Normalize whitespace</div>
+                    <p><code>${step4}</code></p>
+                </div>
+            `;
+
+        // Step 5: Restore multi-character operators and fix any that got split
+        let step5 = step4
+          .replace(/___LESS_EQUAL___/g, " <= ")
+          .replace(/___GREATER_EQUAL___/g, " >= ")
+          .replace(/___NOT_EQUAL___/g, " <> ")
+          .replace(/___AND___/g, " && ")
+          .replace(/___OR___/g, " || ")
+          // Fix any multi-character operators that got split during single-char processing
+          .replace(/>\s*=/g, " >= ")
+          .replace(/<\s*=/g, " <= ")
+          .replace(/<\s*>/g, " <> ")
+          .replace(/&\s*&/g, " && ")
+          .replace(/\|\s*\|/g, " || ");
+        html += `
+                <div class="ui message">
+                    <div class="header">Step 5: Restore multi-character operators</div>
+                    <p><code>${step5}</code></p>
+                </div>
+            `;
+
+        // Final result
+        let final = step5.trim();
+        html += `
+                <div class="ui success message">
+                    <div class="header">Final Result</div>
+                    <p><code>${final}</code></p>
+                </div>
+            `;
+
+        // Compare with actual prettify function
+        let actual = prettifySalesforceFormula(formula);
+        html += `
+                <div class="ui warning message">
+                    <div class="header">Actual prettifySalesforceFormula Result</div>
+                    <p><code>${actual}</code></p>
+                </div>
+            `;
+
+        results.innerHTML = html;
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        analyzePrettification();
+      });
+    </script>
+  </body>
+</html>
