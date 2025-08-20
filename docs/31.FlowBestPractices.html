@@ -23,6 +23,7 @@
     <script type="text/javascript" src="31.FlowBestPractices.js"></script>
     <style>
       .matrix-table th:not(.flow-type) {
+        text-align: left;
         height: auto !important;
         padding: 14px !important;
         vertical-align: bottom !important;
@@ -331,15 +332,15 @@
 
       // Generate matrix table HTML
       function generateMatrixTable(data, flowTypes, violationSeverity, title) {
-        let html = `<table class="ui celled table matrix-table" style="table-layout: fixed;">
+        let html = `<table class="ui celled collapsing table matrix-table" style="table-layout: auto;">
           <thead>
             <tr>
-              <th style="width: 20%; text-align: left;">Violation Type</th>`;
+              <th>Violation Type</th>`;
 
         // Modified header cells with rotated text
         flowTypes.forEach((flowType) => {
           html += `
-            <th class="flow-type" style="width: ${80 / flowTypes.length}%">
+            <th class="flow-type" style="width: 90px">
                 <div>${flowType}</div>
             </th>`;
         });
