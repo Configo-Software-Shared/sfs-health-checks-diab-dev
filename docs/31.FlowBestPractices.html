@@ -21,13 +21,64 @@
     <script type="text/javascript" src="script/cfg-tables.js"></script>
     <script type="text/javascript" src="30.Flows.js"></script>
     <script type="text/javascript" src="31.FlowBestPractices.js"></script>
+    <style>
+      .matrix-table th:not(.flow-type) {
+        height: auto !important;
+        padding: 14px !important;
+        vertical-align: bottom !important;
+      }
+      .matrix-table th.flow-type {
+        position: relative;
+        padding: 0 !important;
+        vertical-align: bottom;
+        text-align: left;
+        /* Height will be set dynamically by JS */
+      }
+      .matrix-table th.flow-type > div {
+        position: absolute;
+        left: calc(50% + 6px); /* 6px is half of typical padding */
+        bottom: 12px;
+        transform-origin: bottom left;
+        transform: rotate(-90deg);
+        white-space: nowrap;
+        text-align: left;
+        width: max-content;
+      }
+    </style>
+    <script>
+      // Dynamically set header row height to fit the tallest rotated label
+      function adjustMatrixHeaderHeight() {
+        document.querySelectorAll(".matrix-table").forEach(function (table) {
+          const headerRow = table.querySelector("thead tr");
+          if (!headerRow) return;
+          let maxLabelLength = 0;
+          table.querySelectorAll("th.flow-type > div").forEach(function (div) {
+            // Temporarily reset height to auto for measurement
+            div.parentElement.style.height = "auto";
+            // Get the rotated label's width (which is the height needed)
+            const labelLength = div.offsetWidth;
+            if (labelLength > maxLabelLength) maxLabelLength = labelLength;
+          });
+          if (maxLabelLength > 0) {
+            // Add a little extra for padding
+            headerRow.style.height = maxLabelLength + 16 + "px";
+          }
+        });
+      }
+      // Run on DOMContentLoaded and after table redraws
+      document.addEventListener("DOMContentLoaded", adjustMatrixHeaderHeight);
+      // If using DataTables or dynamic content, re-run after redraw
+      if (window.jQuery) {
+        jQuery(document).on("draw.dt", adjustMatrixHeaderHeight);
+      }
+    </script>
     <title>Flows – Best Practices</title>
   </head>
   <body>
     <h2 class="ui header">Flows – Best Practices</h2>
 
     <!-- Matrix Tables -->
-    <h3 class="ui header">Best Parctice Violations – All Flows</h3>
+    <h3 class="ui header">Best Practice Violations – All Flows</h3>
     <div id="violation-matrix-all-container"></div>
 
     <h3 class="ui header">Best Practice Violations – Active Flows Only</h3>
@@ -179,7 +230,7 @@
         const violationTypes = [
           ...new Set(flowBestPracticeData.map((v) => v.rule)),
         ].sort();
-        const flowTypes = [...new Set(flowData.map((f) => f.type))];
+        const flowTypes = [...new Set(flowData.map((f) => f.type))].sort();
 
         // Get severity for each violation type
         const violationSeverity = {};
@@ -280,15 +331,17 @@
 
       // Generate matrix table HTML
       function generateMatrixTable(data, flowTypes, violationSeverity, title) {
-        let html = `<table class="ui celled table" style="table-layout: fixed;">
+        let html = `<table class="ui celled table matrix-table" style="table-layout: fixed;">
           <thead>
             <tr>
-              <th style="width: 25%; text-align: left;">Violation Type</th>`;
+              <th style="width: 20%; text-align: left;">Violation Type</th>`;
 
-        // Add flow type columns with equal width
-        const columnWidth = 75 / flowTypes.length + "%";
+        // Modified header cells with rotated text
         flowTypes.forEach((flowType) => {
-          html += `<th style="width: ${columnWidth}; text-align: center;">${flowType}</th>`;
+          html += `
+            <th class="flow-type" style="width: ${80 / flowTypes.length}%">
+                <div>${flowType}</div>
+            </th>`;
         });
 
         html += `
