@@ -19,11 +19,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
     <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="30.Flows.js"></script>
     <script type="text/javascript" src="31.FlowBestPractices.js"></script>
     <title>Flows – Best Practices</title>
   </head>
   <body>
     <h2 class="ui header">Flows – Best Practices</h2>
+
+    <!-- Matrix Tables -->
+    <h3 class="ui header">Best Parctice Violations – All Flows</h3>
+    <div id="violation-matrix-all-container"></div>
+
+    <h3 class="ui header">Best Practice Violations – Active Flows Only</h3>
+    <div id="violation-matrix-active-container"></div>
+
+    <h3 class="ui header">Violation Details by Flow</h3>
     <table id="best-practices" class="ui responsive celled table">
       <thead>
         <tr class="header">
@@ -154,7 +164,200 @@
         return `<div class="ui ${color} label">${data}</div>`;
       }
 
+      // Generate matrix data
+      function generateViolationMatrix() {
+        // Create a map of flow names to their type and status from flowData
+        const flowInfoMap = {};
+        flowData.forEach((flow) => {
+          flowInfoMap[flow.name.fullName] = {
+            type: flow.type,
+            status: flow.status,
+          };
+        });
+
+        // Get unique violation types and flow types
+        const violationTypes = [
+          ...new Set(flowBestPracticeData.map((v) => v.rule)),
+        ].sort();
+        const flowTypes = [...new Set(flowData.map((f) => f.type))];
+
+        // Get severity for each violation type
+        const violationSeverity = {};
+        flowBestPracticeData.forEach((v) => {
+          if (!violationSeverity[v.rule]) {
+            violationSeverity[v.rule] = v.severity;
+          }
+        });
+
+        // Generate matrix data for all flows
+        const matrixDataAll = violationTypes.map((violationType) => {
+          const row = { violationType };
+
+          flowTypes.forEach((flowType) => {
+            const flowsOfType = flowData.filter((f) => f.type === flowType);
+            const flowsWithViolation = new Set();
+
+            flowBestPracticeData.forEach((violation) => {
+              if (violation.rule === violationType) {
+                const flowInfo = flowInfoMap[violation.flow.fullName];
+                if (flowInfo && flowInfo.type === flowType) {
+                  flowsWithViolation.add(violation.flow.fullName);
+                }
+              }
+            });
+
+            row[flowType] = {
+              violations: flowsWithViolation.size,
+              total: flowsOfType.length,
+              hasViolations: flowsWithViolation.size > 0,
+            };
+          });
+
+          return row;
+        });
+
+        // Generate matrix data for active flows only
+        const matrixDataActive = violationTypes.map((violationType) => {
+          const row = { violationType };
+
+          flowTypes.forEach((flowType) => {
+            const activeFlowsOfType = flowData.filter(
+              (f) => f.type === flowType && f.status === "Active"
+            );
+            const activeFlowsWithViolation = new Set();
+
+            flowBestPracticeData.forEach((violation) => {
+              if (violation.rule === violationType) {
+                const flowInfo = flowInfoMap[violation.flow.fullName];
+                if (
+                  flowInfo &&
+                  flowInfo.type === flowType &&
+                  flowInfo.status === "Active"
+                ) {
+                  activeFlowsWithViolation.add(violation.flow.fullName);
+                }
+              }
+            });
+
+            row[flowType] = {
+              violations: activeFlowsWithViolation.size,
+              total: activeFlowsOfType.length,
+              hasViolations: activeFlowsWithViolation.size > 0,
+            };
+          });
+
+          return row;
+        });
+
+        return {
+          matrixDataAll,
+          matrixDataActive,
+          flowTypes,
+          violationSeverity,
+        };
+      }
+
+      // Generate color based on violation percentage
+      function getViolationColor(violations, total) {
+        if (total === 0) return "#f8f9fa"; // Light gray for no flows
+        const percentage = (violations / total) * 100;
+
+        if (percentage === 0) return "#dce9e2"; // Light green
+        if (percentage <= 25) return "#c7e4d3"; // Green
+        if (percentage <= 50) return "#fff3cd"; // Yellow
+        if (percentage <= 75) return "#f4c2c7"; // Light red
+        return "#efb3b8"; // Red
+      }
+
+      // Generate severity label HTML
+      function getSeverityLabel(severity) {
+        const color =
+          severity === "error" ? "red"
+          : severity === "warning" ? "yellow"
+          : "teal";
+        return `<div class="ui ${color} label">${severity}</div>`;
+      }
+
+      // Generate matrix table HTML
+      function generateMatrixTable(data, flowTypes, violationSeverity, title) {
+        let html = `<table class="ui celled table" style="table-layout: fixed;">
+          <thead>
+            <tr>
+              <th style="width: 25%; text-align: left;">Violation Type</th>`;
+
+        // Add flow type columns with equal width
+        const columnWidth = 75 / flowTypes.length + "%";
+        flowTypes.forEach((flowType) => {
+          html += `<th style="width: ${columnWidth}; text-align: center;">${flowType}</th>`;
+        });
+
+        html += `
+            </tr>
+          </thead>
+          <tbody>`;
+
+        // Add data rows
+        data.forEach((row) => {
+          const severity = violationSeverity[row.violationType];
+          html += `
+            <tr>
+              <td style="text-align: left;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span>${row.violationType}</span>
+                  ${getSeverityLabel(severity)}
+                </div>
+              </td>`;
+
+          flowTypes.forEach((flowType) => {
+            const cellData = row[flowType];
+            const backgroundColor = getViolationColor(
+              cellData.violations,
+              cellData.total
+            );
+            const text =
+              cellData.total > 0 ?
+                `${cellData.violations} / ${cellData.total}`
+              : "0 / 0";
+            const fontWeight = cellData.violations > 0 ? "bold" : "normal";
+            const color = cellData.violations === 0 ? "#999" : "inherit";
+
+            html += `<td style="text-align: center; background-color: ${backgroundColor}; font-weight: ${fontWeight}; color: ${color};">${text}</td>`;
+          });
+
+          html += `</tr>`;
+        });
+
+        html += `
+          </tbody>
+        </table>`;
+
+        return html;
+      }
+
       $(document).ready(function () {
+        // Generate matrix data
+        const matrixData = generateViolationMatrix();
+
+        // Generate and insert the matrix tables
+        const allFlowsTable = generateMatrixTable(
+          matrixData.matrixDataAll,
+          matrixData.flowTypes,
+          matrixData.violationSeverity,
+          "All Flows"
+        );
+        document.getElementById("violation-matrix-all-container").innerHTML =
+          allFlowsTable;
+
+        const activeFlowsTable = generateMatrixTable(
+          matrixData.matrixDataActive,
+          matrixData.flowTypes,
+          matrixData.violationSeverity,
+          "Active Flows"
+        );
+        document.getElementById("violation-matrix-active-container").innerHTML =
+          activeFlowsTable;
+
+        // Initialize detailed violations table
         initDataTableWithButtons(
           "#best-practices",
           "Flow Best Practices",
