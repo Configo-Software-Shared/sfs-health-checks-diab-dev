@@ -1,0 +1,155 @@
+<html lang="en" style="padding: 20px">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.css"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fomantic-ui/2.9.3/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/v/se/jszip-3.10.1/dt-2.0.7/b-3.0.2/b-colvis-3.0.2/b-html5-3.0.2/b-print-3.0.2/cr-2.0.2/date-1.5.2/fc-5.0.0/fh-4.0.1/kt-2.12.0/r-3.0.2/rg-1.5.0/sc-2.4.2/sb-1.7.1/sp-2.3.1/datatables.min.js"></script>
+    <script type="text/javascript" src="script/cfg-tables.js"></script>
+    <script type="text/javascript" src="35.ApexComponents.js"></script>
+    <title>Apex Components</title>
+  </head>
+  <body>
+    <h2 class="ui header">Apex Classes Summary</h2>
+    <table id="class-summary" class="ui responsive celled table">
+      <thead>
+        <tr class="header">
+          <th>Namespace</th>
+          <th>Total</th>
+          <th>Active</th>
+          <th>API versions</th>
+        </tr>
+      </thead>
+    </table>
+    <h2 class="ui header">Apex Classes</h2>
+    <table id="classes" class="ui responsive celled table">
+      <thead>
+        <tr class="header">
+          <th>Full Name</th>
+          <th>Status</th>
+          <th>API Version</th>
+          <th>Manageable State</th>
+          <th>Package Version</th>
+          <th>Length</th>
+        </tr>
+      </thead>
+    </table>
+    <script>
+      // Group and summarize class data by namespace
+      const classSummaryData = Object.values(
+        apexClassData.reduce((acc, cls) => {
+          const ns = cls.name.ns;
+          if (!acc[ns]) {
+            acc[ns] = {
+              namespace: ns,
+              total: 0,
+              active: 0,
+              apiVersions: new Set(),
+            };
+          }
+
+          acc[ns].total++;
+          if (cls.status === "Active") {
+            acc[ns].active++;
+          }
+          acc[ns].apiVersions.add(cls.apiVersion);
+
+          return acc;
+        }, {})
+      ).map((summary) => ({
+        ...summary,
+        apiVersions: Array.from(summary.apiVersions).sort(),
+      }));
+
+      function renderClassCount(
+        detailTableId,
+        nsIndex,
+        statusIndex,
+        statusValue
+      ) {
+        return function (data, type, row, meta) {
+          if (type !== "display" || !row || data === 0) return data;
+
+          const ns = row.namespace;
+          const filterValue =
+            String(ns) == "" ? "((?!__).)*" : `${String(ns)}__.+`;
+          const secondFilter =
+            (
+              typeof statusIndex === "number" &&
+              typeof statusValue === "string" &&
+              statusValue.length > 0
+            ) ?
+              `setColumnFilter('${detailTableId}', ${statusIndex}, '${statusValue}');`
+            : "";
+          return `<a href="#" onclick="
+            clearAllFilters('${detailTableId}');
+            setColumnFilter('${detailTableId}', ${nsIndex}, '/^${filterValue}$');
+            ${secondFilter}
+            scrollTableIntoView('${detailTableId}');
+            return false;
+          ">${data}</a>`;
+        };
+      }
+
+      $(document).ready(function () {
+        initDataTableWithButtons(
+          "#class-summary",
+          "Apex Class Summary",
+          true,
+          true,
+          {
+            data: classSummaryData,
+            columns: [
+              { data: "namespace", title: "Namespace" },
+              {
+                data: "total",
+                title: "Total",
+                render: renderClassCount("#classes", 0),
+              },
+              {
+                data: "active",
+                title: "Active",
+                render: renderClassCount("#classes", 0, 1, "Active"),
+              },
+              {
+                data: "apiVersions",
+                title: "API versions",
+                render: (data, type) =>
+                  type === "display" ? data.join(", ") : data.join("||"),
+              },
+            ],
+            pageLength: 20,
+            lengthMenu: [20, 40, 70, 100],
+          }
+        );
+
+        initDataTableWithButtons("#classes", "Apex Classes", true, true, {
+          data: apexClassData,
+          columns: [
+            { data: "name.full", title: "Full Name" },
+            { data: "status", title: "Status" },
+            { data: "apiVersion", title: "API Version" },
+            { data: "manageableState", title: "Manageable State" },
+            { data: "packageVersion", title: "Package Version" },
+            { data: "length", title: "Length" },
+          ],
+          pageLength: 20,
+          lengthMenu: [20, 40, 70, 100],
+        });
+      });
+    </script>
+  </body>
+</html>

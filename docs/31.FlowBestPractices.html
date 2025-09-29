@@ -90,6 +90,8 @@
       <thead>
         <tr class="header">
           <th>Flow</th>
+          <th>Flow Type</th>
+          <th>Status</th>
           <th>Violated Rule</th>
           <th>Details</th>
           <th>Severity</th>
@@ -97,36 +99,6 @@
       </thead>
     </table>
     <script>
-      function renderFlowCount(
-        detailTableId,
-        typeIndex,
-        statusIndex,
-        statusValue
-      ) {
-        return function (data, type, row, meta) {
-          if (type !== "display" || !row || !row.type || data === 0)
-            return data;
-
-          const name = row.type;
-          const safeName = String(name).replace(/"/g, "&quot;");
-          const secondFilter =
-            (
-              typeof statusIndex === "number" &&
-              typeof statusValue === "string" &&
-              statusValue.length > 0
-            ) ?
-              `setColumnFilter('${detailTableId}', ${statusIndex}, '${statusValue}');`
-            : "";
-          return `<a href="#" onclick="
-        clearAllFilters('${detailTableId}');
-        setColumnFilter('${detailTableId}', ${typeIndex}, '/^${safeName}$');
-        ${secondFilter}
-        scrollTableIntoView('${detailTableId}');
-        return false;
-      ">${data}</a>`;
-        };
-      }
-
       function renderLabelAndFullName(data, type, row, meta) {
         if (type !== "display")
           return data?.label + " (" + data?.fullName + ")";
@@ -157,12 +129,20 @@
                 "</div>";
             }
             if ("elements" in data) {
-              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${data.elements.map((e) => renderElement(e, type, "teal")).join("")}</div>`;
+              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${data.elements
+                .map((e) => renderElement(e, type, "teal"))
+                .join("")}</div>`;
             }
             if ("element" in data) {
-              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${renderElement(data.element, type, "teal")}`;
+              msg += `<div style="margin-top:0.5em;display:flex;flex-wrap:wrap;gap:0.5em;">${renderElement(
+                data.element,
+                type,
+                "teal"
+              )}`;
               if ("related" in data) {
-                msg += `<span>: </span>${data.related.map((e) => renderElement(e, type, "yellow")).join("")}`;
+                msg += `<span>: </span>${data.related
+                  .map((e) => renderElement(e, type, "yellow"))
+                  .join("")}`;
               }
               msg += "</div>";
             }
@@ -175,12 +155,20 @@
               );
             }
             if ("elements" in data) {
-              msg += `${msg ? "; " : ""}elements=(${data.elements.map((e) => renderElement(e, type)).join(", ")})`;
+              msg += `${msg ? "; " : ""}elements=(${data.elements
+                .map((e) => renderElement(e, type))
+                .join(", ")})`;
             }
             if ("element" in data) {
-              msg += `${msg ? "; " : ""}${renderElement(data.element, type, "teal")}`;
+              msg += `${msg ? "; " : ""}${renderElement(
+                data.element,
+                type,
+                "teal"
+              )}`;
               if ("related" in data) {
-                msg += `: ${data.related.map((e) => renderElement(e, type, "yellow")).join(", ")}`;
+                msg += `: ${data.related
+                  .map((e) => renderElement(e, type, "yellow"))
+                  .join(", ")}`;
               }
             }
             return msg;
@@ -330,6 +318,38 @@
         return `<div class="ui ${color} label">${severity}</div>`;
       }
 
+      function renderFlowViolationCount(
+        detailTableId,
+        data,
+        typeIndex,
+        typeValue,
+        violationTypeIndex,
+        violationTypeValue,
+        statusIndex,
+        statusValue
+      ) {
+        if (data.startsWith("0 /")) {
+          return data; // No link for zero violations
+        }
+
+        const statusFilter =
+          (
+            typeof statusIndex === "number" &&
+            typeof statusValue === "string" &&
+            statusValue.length > 0
+          ) ?
+            `setColumnFilter('${detailTableId}', ${statusIndex}, '${statusValue}');`
+          : "";
+        return `<a href="#" onclick="
+            clearAllFilters('${detailTableId}');
+            setColumnFilter('${detailTableId}', ${typeIndex}, '/^${typeValue}$');
+            setColumnFilter('${detailTableId}', ${violationTypeIndex}, '/^${violationTypeValue}$');
+            ${statusFilter}
+            scrollTableIntoView('${detailTableId}');
+            return false;
+          ">${data}</a>`;
+      }
+
       // Generate matrix table HTML
       function generateMatrixTable(data, flowTypes, violationSeverity, title) {
         let html = `<table class="ui celled collapsing table matrix-table" style="table-layout: auto;">
@@ -375,7 +395,19 @@
             const fontWeight = cellData.violations > 0 ? "bold" : "normal";
             const color = cellData.violations === 0 ? "#999" : "inherit";
 
-            html += `<td style="text-align: center; background-color: ${backgroundColor}; font-weight: ${fontWeight}; color: ${color};">${text}</td>`;
+            html +=
+              `<td style="text-align: center; background-color: ${backgroundColor}; font-weight: ${fontWeight}; color: ${color};">` +
+              renderFlowViolationCount(
+                "#best-practices",
+                text,
+                1,
+                flowType,
+                3,
+                row.violationType,
+                title === "Active Flows" ? 2 : undefined,
+                title === "Active Flows" ? "Active" : undefined
+              ) +
+              `</td>`;
           });
 
           html += `</tr>`;
@@ -421,6 +453,8 @@
             data: flowBestPracticeData,
             columns: [
               { data: "flow", title: "Flow", render: renderLabelAndFullName },
+              { data: "flow.type", title: "Flow Type" },
+              { data: "flow.status", title: "Status" },
               { data: "rule", title: "Violated Rule" },
               { data: "details", title: "Details", render: renderDetails },
               {
